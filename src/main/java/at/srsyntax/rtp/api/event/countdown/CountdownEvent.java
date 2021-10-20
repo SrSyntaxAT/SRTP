@@ -1,6 +1,8 @@
-package at.srsyntax.rtp.api.countdown;
+package at.srsyntax.rtp.api.event.countdown;
 
-import at.srsyntax.rtp.api.message.Message;
+import at.srsyntax.rtp.api.countdown.Countdown;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 
 /*
  * MIT License
@@ -25,14 +27,15 @@ import at.srsyntax.rtp.api.message.Message;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Countdown {
-
-  Countdown addMessage(int time, Message message);
-
-  int getTime();
-  
-  boolean isRunning();
-
-  void start();
-  void cancel();
+public abstract class CountdownEvent extends Event {
+	
+	private final Countdown countdown;
+	
+	public CountdownEvent(Countdown countdown) {
+		this.countdown = countdown;
+	}
+	
+	public Countdown getCountdown() {
+		return countdown;
+	}
 }

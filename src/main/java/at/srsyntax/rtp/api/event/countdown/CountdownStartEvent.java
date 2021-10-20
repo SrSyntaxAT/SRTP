@@ -1,6 +1,12 @@
-package at.srsyntax.rtp.api.countdown;
+package at.srsyntax.rtp.api.event.countdown;
 
-import at.srsyntax.rtp.api.message.Message;
+import at.srsyntax.rtp.api.countdown.Countdown;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * MIT License
@@ -25,14 +31,28 @@ import at.srsyntax.rtp.api.message.Message;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Countdown {
-
-  Countdown addMessage(int time, Message message);
-
-  int getTime();
-  
-  boolean isRunning();
-
-  void start();
-  void cancel();
+public class CountdownStartEvent extends CountdownEvent {
+	
+	private static final HandlerList handlers = new HandlerList();
+	
+	private final Player targetPlayer;
+	
+	public CountdownStartEvent(Countdown countdown, Player targetPlayer) {
+		super(countdown);
+		this.targetPlayer = targetPlayer;
+	}
+	
+	public Player getPlayer() {
+		return targetPlayer;
+	}
+	
+	@Override
+	public @NotNull HandlerList getHandlers() {
+		return handlers;
+	}
+	
+	@NotNull
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 }

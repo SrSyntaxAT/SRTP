@@ -3,6 +3,7 @@ package at.srsyntax.rtp;
 import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.api.countdown.Callback;
 import at.srsyntax.rtp.api.countdown.Countdown;
+import at.srsyntax.rtp.api.event.PlayerRandomTeleportEvent;
 import at.srsyntax.rtp.api.message.Message;
 import at.srsyntax.rtp.api.exception.InvalidWorldTypeException;
 import at.srsyntax.rtp.api.exception.TeleportException;
@@ -19,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.WorldType;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.SimplePluginManager;
@@ -155,6 +157,9 @@ public class SyntaxRTP extends JavaPlugin implements API {
       @Override
       public void done(Player player, Location location) {
         Bukkit.getScheduler().runTask(SyntaxRTP.instance, () -> {
+          final Location oldLocation = player.getLocation();
+          Bukkit.getPluginManager().callEvent(new PlayerRandomTeleportEvent(player, oldLocation, location, PlayerTeleportEvent.TeleportCause.PLUGIN));
+          
           if (pluginConfig.isPaperAsync()) {
             try {
               player.teleportAsync(location).get();
@@ -265,6 +270,10 @@ public class SyntaxRTP extends JavaPlugin implements API {
     final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
     commandMap.register(getName(), new RTPCommand(this, pluginConfig));
     field.setAccessible(false);
+  }
+  
+  public void sync(Runnable runnable) {
+    Bukkit.getScheduler().runTask(this, runnable);
   }
 
   private PluginConfig loadConfig() throws ConfigLoadException {

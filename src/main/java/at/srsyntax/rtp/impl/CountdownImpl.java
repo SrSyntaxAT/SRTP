@@ -3,6 +3,8 @@ package at.srsyntax.rtp.impl;
 import at.srsyntax.rtp.SyntaxRTP;
 import at.srsyntax.rtp.api.countdown.Callback;
 import at.srsyntax.rtp.api.countdown.Countdown;
+import at.srsyntax.rtp.api.event.countdown.CountdownFinishedEvent;
+import at.srsyntax.rtp.api.event.countdown.CountdownStartEvent;
 import at.srsyntax.rtp.api.message.Message;
 import at.srsyntax.rtp.config.MessageConfig;
 import org.bukkit.Bukkit;
@@ -39,6 +41,8 @@ public class CountdownImpl implements Countdown {
 
   private int time, task;
   private final Callback callback;
+  
+  private boolean running = false;
 
   private final Map<Integer, LinkedList<Message>> map = new HashMap<>();
 
@@ -60,9 +64,16 @@ public class CountdownImpl implements Countdown {
   public int getTime() {
     return time;
   }
-
+  
+  @Override
+  public boolean isRunning() {
+    return running;
+  }
+  
   @Override
   public void start() {
+    running = true;
+    plugin.sync(() -> Bukkit.getPluginManager().callEvent(new CountdownStartEvent(this, callback.getPlayer())));
     final MessageConfig config = plugin.getPluginConfig().getMessages();
     this.task = Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, () -> {
       try {
@@ -83,7 +94,7 @@ public class CountdownImpl implements Countdown {
         time--;
       } catch (Exception e) {
         e.printStackTrace();
-        cancel();
+        cancel(false);
         new Message(callback.getPlayer(), config.getTeleportError()).prefix(config.getPrefix()).send();
       }
     }, 0, 20);
@@ -99,9 +110,15 @@ public class CountdownImpl implements Countdown {
         ", map=" + map +
         '}';
   }
+  
+  private void cancel(boolean successful) {
+    plugin.sync(() -> Bukkit.getPluginManager().callEvent(new CountdownFinishedEvent(this, successful)));
+    running = false;
+    Bukkit.getScheduler().cancelTask(task);
+  }
 
   @Override
   public void cancel() {
-    Bukkit.getScheduler().cancelTask(task);
+    cancel(true);
   }
 }
