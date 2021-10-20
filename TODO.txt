@@ -3,8 +3,8 @@ TODO for the next versions
   Vault Support
   multiple rtp worlds/locations
   support end and nether
-  Events
   Setting to disable prefix
+  version check
 
   Readme File
   Upload to SpigotMC / SpigotMC description
