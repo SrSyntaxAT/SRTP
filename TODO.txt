@@ -2,7 +2,6 @@ TODO for the next versions
 
   Vault Support
   multiple rtp worlds/locations
-  support end and nether
   Setting to disable prefix
   version check
 

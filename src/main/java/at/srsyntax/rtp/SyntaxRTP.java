@@ -5,7 +5,6 @@ import at.srsyntax.rtp.api.countdown.Callback;
 import at.srsyntax.rtp.api.countdown.Countdown;
 import at.srsyntax.rtp.api.event.PlayerRandomTeleportEvent;
 import at.srsyntax.rtp.api.message.Message;
-import at.srsyntax.rtp.api.exception.InvalidWorldTypeException;
 import at.srsyntax.rtp.api.exception.TeleportException;
 import at.srsyntax.rtp.api.message.MessageType;
 import at.srsyntax.rtp.command.RTPCommand;
@@ -15,9 +14,8 @@ import at.srsyntax.rtp.config.MessageConfig;
 import at.srsyntax.rtp.config.PermissionConfig;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.impl.CountdownImpl;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.WorldType;
+import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -77,6 +75,8 @@ public class SyntaxRTP extends JavaPlugin implements API {
 
       pluginConfig = loadConfig();
       teleportCenter = pluginConfig.getTeleportCenter().toLocation();
+      if (teleportCenter.getWorld() == null)
+        throw new NullPointerException("World not found!");
 
       registerCommand();
 
@@ -227,17 +227,49 @@ public class SyntaxRTP extends JavaPlugin implements API {
 
   @Override
   public Location randomLocation(Location center, int minRadius, int radius) {
-    final WorldType worldType = center.getWorld().getWorldType();
-    if (worldType != null && worldType != WorldType.NORMAL) throw new InvalidWorldTypeException();
-
+    boolean nether = center.getWorld().getEnvironment() == World.Environment.NETHER;
     int x, y, z;
 
-    x = random(center.getBlockX(), minRadius, radius);
-    z = random(center.getBlockZ(), minRadius, radius);
-    y = center.getWorld().getHighestBlockYAt(x, z) + 1;
+    do {
+      x = random(center.getBlockX(), minRadius, radius);
+      z = random(center.getBlockZ(), minRadius, radius);
+      y = center.getWorld().getHighestBlockYAt(x, z);
+
+      if (nether) {
+
+        while (y != 0) {
+          y = findBlockAtY(center, x, y, z, true);
+
+          y--;
+          final Block block = getBlock(center, x, y, z);
+          if (!block.getType().isAir())
+            continue;
+
+          y = findBlockAtY(center, x, y, z, false) + 1;
+          break;
+        }
+      } else if (y != 0) {
+        y++;
+      }
+    } while (y == 0);
 
     return new Location(center.getWorld(), x, y, z, center.getYaw(), center.getPitch());
   }
+
+  private Block getBlock(Location location, int x, int y, int z) {
+    return location.getWorld().getBlockAt(x, y, z);
+  }
+
+  private int findBlockAtY(Location location, int x, int y, int z, boolean air) {
+    Block block;
+    do {
+      block = getBlock(location, x, y, z);
+      if (block.getType().isAir() == air) break;
+      y--;
+    } while (y > 0);
+    return y;
+  }
+
 
   private int random(int current, int min, int radius) {
     boolean finished = false;
