@@ -1,8 +1,6 @@
 TODO for the next versions
 
   Vault Support
-  multiple rtp worlds/locations
-  Setting to disable prefix
   version check
 
   Readme File

@@ -36,22 +36,21 @@ import java.util.Arrays;
  */
 public class PluginConfig {
 
-  private final boolean paperAsync;
+  private final boolean paperAsync, usePrefix;
   private final String[] aliases;
-  private final LocationConfig teleportCenter;
-  private final int radius, minRadius;
-  private final short cooldown, countdown;
+  
+  private final String defaultLocation;
+  private final LocationConfig[] locations;
+  
   private final PermissionConfig permissions;
   private final MessageConfig messages;
 
-  public PluginConfig(boolean paperAsync, String[] aliases, LocationConfig teleportCenter, int minRadius, int radius, short cooldown, short countdown, PermissionConfig permissions, MessageConfig messages) {
+  public PluginConfig(boolean paperAsync, boolean usePrefix, String[] aliases, String defaultLocation, LocationConfig[] locations, PermissionConfig permissions, MessageConfig messages) {
     this.paperAsync = paperAsync;
+    this.usePrefix = usePrefix;
     this.aliases = aliases;
-    this.teleportCenter = teleportCenter;
-    this.minRadius = minRadius;
-    this.radius = radius;
-    this.cooldown = cooldown;
-    this.countdown = countdown;
+    this.defaultLocation = defaultLocation;
+    this.locations = locations;
     this.permissions = permissions;
     this.messages = messages;
   }
@@ -85,32 +84,24 @@ public class PluginConfig {
   public String[] getAliases() {
     return aliases;
   }
-
-  public LocationConfig getTeleportCenter() {
-    return teleportCenter;
+  
+  public LocationConfig[] getLocations() {
+    return locations;
   }
-
-  public int getMinRadius() {
-    return minRadius;
+  
+  public String getDefaultLocation() {
+    return defaultLocation;
   }
-
-  public int getRadius() {
-    return radius;
-  }
-
-  public short getCooldown() {
-    return cooldown;
-  }
-
-  public short getCountdown() {
-    return countdown;
-  }
-
+  
   public PermissionConfig getPermissions() {
     return permissions;
   }
 
   public MessageConfig getMessages() {
     return messages;
+  }
+  
+  public boolean isUsePrefix() {
+    return usePrefix;
   }
 }

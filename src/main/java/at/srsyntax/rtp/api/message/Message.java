@@ -1,5 +1,6 @@
 package at.srsyntax.rtp.api.message;
 
+import at.srsyntax.rtp.SyntaxRTP;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -72,13 +73,13 @@ public class Message {
   public void send(Map<String, String> replaces) {
     switch (type) {
       case CHAT:
-        target.sendMessage(replace(prefix, message, replaces));
+        target.sendMessage(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces));
         break;
       case TITLE:
         target.sendTitle(prefix == null ? "" : replace(prefix, null), replace(message, replaces));
         break;
       case ACTIONBAR:
-        target.sendActionBar(replace(prefix, message, replaces));
+        target.sendActionBar(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces));
         break;
       default:
         throw new IllegalArgumentException();

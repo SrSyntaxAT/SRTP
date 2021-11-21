@@ -1,6 +1,6 @@
 package at.srsyntax.rtp.api.countdown;
 
-import org.bukkit.Location;
+import at.srsyntax.rtp.api.teleport.TeleportLocation;
 import org.bukkit.entity.Player;
 
 /*
@@ -28,8 +28,8 @@ import org.bukkit.entity.Player;
  */
 public interface Callback {
 
-  void done(Player player, Location location);
+  void done(Player player, TeleportLocation location);
 
   Player getPlayer();
-  Location getLocation();
+  TeleportLocation getLocation();
 }

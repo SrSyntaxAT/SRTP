@@ -1,8 +1,10 @@
 package at.srsyntax.rtp.command;
 
 import at.srsyntax.rtp.SyntaxRTP;
+import at.srsyntax.rtp.api.exception.LocationNotFound;
 import at.srsyntax.rtp.api.exception.TeleportException;
 import at.srsyntax.rtp.api.message.Message;
+import at.srsyntax.rtp.api.teleport.TeleportLocation;
 import at.srsyntax.rtp.config.MessageConfig;
 import at.srsyntax.rtp.config.PermissionConfig;
 import at.srsyntax.rtp.config.PluginConfig;
@@ -55,12 +57,12 @@ public class RTPCommand extends Command {
     final String prefix = messageConfig.getPrefix();
 
     if (strings.length == 0)
-      return single(commandSender, prefix);
+      return single(commandSender, s, prefix);
     else
-      return other(commandSender, strings, prefix);
+      return other(commandSender, s, strings, prefix);
   }
 
-  private boolean single(CommandSender commandSender, String prefix) {
+  private boolean single(CommandSender commandSender, String label, String prefix) {
     if (!(commandSender instanceof Player)) {
       commandSender.sendMessage("§cuse srtp <player>");
       return false;
@@ -71,20 +73,27 @@ public class RTPCommand extends Command {
       new Message(target, messageConfig.getNoPermission()).prefix(prefix).send();
       return false;
     }
-
-    syntaxRTP.teleportAsync(target).handle((aBoolean, throwable) -> {
-      if (throwable == null) {
-        if (!aBoolean)
-          new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
-      } else {
-        new Message(target, throwable.getCause().getMessage()).prefix(prefix).send();
-      }
-      return true;
-    });
+  
+    try {
+      final TeleportLocation location = syntaxRTP.getCommandAliasLocation(label);
+      syntaxRTP.teleportAsync(target, location).handle((aBoolean, throwable) -> {
+        if (throwable == null) {
+          if (!aBoolean)
+            new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
+        } else {
+          new Message(target, throwable.getCause().getMessage()).prefix(prefix).send();
+        }
+        return true;
+      });
+    } catch (LocationNotFound e) {
+      new Message(target, messageConfig.getTeleportError()).prefix(prefix).send();
+      e.printStackTrace();
+    }
+    
     return false;
   }
 
-  private boolean other(CommandSender commandSender, String[] strings, String prefix) {
+  private boolean other(CommandSender commandSender, String label, String[] strings, String prefix) {
     final Player target = Bukkit.getPlayer(strings[0]);
     final Map<String, String> replaces = new HashMap<>();
     final boolean available = target != null && target.isOnline();
@@ -93,30 +102,37 @@ public class RTPCommand extends Command {
       replaces.put("<player>", target.getName());
 
     if (commandSender instanceof Player)
-      return otherPlayer((Player) commandSender, target, available, replaces, prefix);
-    return otherConsole(commandSender, target, available, replaces, prefix);
+      return otherPlayer((Player) commandSender, target, label, available, replaces, prefix);
+    return otherConsole(commandSender, target, label, available, replaces, prefix);
   }
 
-  private boolean otherConsole(CommandSender commandSender, Player target, boolean available, Map<String, String> replaces, String prefix) {
+  private boolean otherConsole(CommandSender commandSender, Player target, String label, boolean available, Map<String, String> replaces, String prefix) {
     if (!available) {
       commandSender.sendMessage(Message.replace(prefix, messageConfig.getPlayerNotFound(), null));
       return false;
     }
+  
+    try {
+      final TeleportLocation location = syntaxRTP.getCommandAliasLocation(label);
+      syntaxRTP.teleportAsync(target, location).handle((aBoolean, throwable) -> {
+        if (throwable == null) {
+          commandSender.sendMessage(Message.replace(prefix, messageConfig.getTeleportOther().split(";")[1], replaces));
+          if (!aBoolean)
+            new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
+        } else {
+          commandSender.sendMessage(Message.replace(prefix, throwable.getCause().getMessage(), null));
+        }
+        return true;
+      });
+    } catch (LocationNotFound e) {
+      new Message(target, messageConfig.getTeleportError()).prefix(prefix).send();
+      e.printStackTrace();
+    }
 
-    syntaxRTP.teleportAsync(target, 0, 0).handle((aBoolean, throwable) -> {
-      if (throwable == null) {
-        commandSender.sendMessage(Message.replace(prefix, messageConfig.getTeleportOther().split(";")[1], replaces));
-        if (!aBoolean)
-          new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
-      } else {
-        commandSender.sendMessage(Message.replace(prefix, throwable.getCause().getMessage(), null));
-      }
-      return true;
-    });
     return false;
   }
 
-  private boolean otherPlayer(Player sender, Player target, boolean available, Map<String, String> replaces, String prefix) {
+  private boolean otherPlayer(Player sender, Player target, String label, boolean available, Map<String, String> replaces, String prefix) {
     if (!sender.hasPermission(permissionConfig.getTeleportOther())) {
       new Message(sender, messageConfig.getNoPermission()).prefix(prefix).send();
       return false;
@@ -126,17 +142,24 @@ public class RTPCommand extends Command {
       new Message(sender, messageConfig.getPlayerNotFound()).prefix(prefix).send();
       return false;
     }
-
-    syntaxRTP.teleportAsync(target, 0, 0).handle((aBoolean, throwable) -> {
-      if (throwable == null) {
-        new Message(sender, messageConfig.getTeleportOther()).prefix(prefix).send(replaces);
-        if (!aBoolean)
-          new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
-      } else {
-        new Message(sender, throwable.getCause().getMessage()).prefix(messageConfig.getPrefix()).prefix(prefix).send();
-      }
-      return true;
-    });
+  
+    try {
+      final TeleportLocation location = syntaxRTP.getCommandAliasLocation(label);
+      syntaxRTP.teleportAsync(target, location).handle((aBoolean, throwable) -> {
+        if (throwable == null) {
+          new Message(sender, messageConfig.getTeleportOther()).prefix(prefix).send(replaces);
+          if (!aBoolean)
+            new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
+        } else {
+          new Message(sender, throwable.getCause().getMessage()).prefix(messageConfig.getPrefix()).prefix(prefix).send();
+        }
+        return true;
+      });
+    } catch (LocationNotFound e) {
+      new Message(target, messageConfig.getTeleportError()).prefix(prefix).send();
+      e.printStackTrace();
+    }
+    
     return false;
   }
 }
