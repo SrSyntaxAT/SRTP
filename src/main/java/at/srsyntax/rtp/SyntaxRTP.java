@@ -28,13 +28,12 @@ import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -69,7 +68,6 @@ public class SyntaxRTP extends JavaPlugin implements API {
   private static SyntaxRTP instance;
 
   private PluginConfig pluginConfig;
-  
   private boolean usePrefix = true;
 
   public static final String METADATA_COOLDOWN_KEY = "srtpc:#";
@@ -112,24 +110,24 @@ public class SyntaxRTP extends JavaPlugin implements API {
     }
   }
 
-  private Callback createCallback(Player target, TeleportLocation location) {
+  private Callback createCallback(Player target, Location location, String key) {
     return new Callback() {
       @Override
-      public void done(Player player, TeleportLocation location) {
+      public void done(Player player, Location location) {
         Bukkit.getScheduler().runTask(SyntaxRTP.instance, () -> {
           final Location oldLocation = player.getLocation();
-          Bukkit.getPluginManager().callEvent(new PlayerRandomTeleportEvent(player, oldLocation, location.toLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN));
+          Bukkit.getPluginManager().callEvent(new PlayerRandomTeleportEvent(player, oldLocation, location, PlayerTeleportEvent.TeleportCause.PLUGIN));
           
           if (pluginConfig.isPaperAsync()) {
             try {
-              player.teleportAsync(location.toLocation()).get();
+              player.teleportAsync(location).get();
             } catch (InterruptedException | ExecutionException e) {
               e.printStackTrace();
             }
           }
           else
-            player.teleport(location.toLocation());
-          player.setMetadata(METADATA_COOLDOWN_KEY.replace("#", location.getName()), new FixedMetadataValue(SyntaxRTP.instance, System.currentTimeMillis()));
+            player.teleport(location);
+          player.setMetadata(METADATA_COOLDOWN_KEY.replace("#", key), new FixedMetadataValue(SyntaxRTP.instance, System.currentTimeMillis()));
         });
       }
 
@@ -139,7 +137,7 @@ public class SyntaxRTP extends JavaPlugin implements API {
       }
 
       @Override
-      public TeleportLocation getLocation() {
+      public Location getLocation() {
         return location;
       }
     };
@@ -171,17 +169,25 @@ public class SyntaxRTP extends JavaPlugin implements API {
     final MessageConfig messageConfig = pluginConfig.getMessages();
   
     checkCooldown(target, location.getCooldown(), messageConfig);
-    final Callback callback = createCallback(target, location);
+    final Location newLocation = randomLocation(location);
+    final Callback callback = createCallback(target, newLocation, location.getName());
   
-    if (location.getCountdown() > 0) {
+    if (hasCountdown(target, location)) {
       final Countdown countdown = createCountdown(location.getCountdown(), callback);
       registerMessagesForCountdown(countdown, messageConfig.getTeleportCountdown(), messageConfig.getPrefix());
       countdown.start();
       return true;
     } else {
-      callback.done(target, location);
+      callback.done(target, newLocation);
       return false;
     }
+  }
+  
+  private boolean hasCountdown(Player player, TeleportLocation location) {
+    return
+      location.getCountdown() > 0 &&
+        (!player.hasPermission(pluginConfig.getPermissions().getTeleportCountdownBypass())
+      || !player.hasPermission(pluginConfig.getPermissions().getTeleportCountdownBypass().replace("*", location.getName())));
   }
   
   @Override
@@ -311,6 +317,11 @@ public class SyntaxRTP extends JavaPlugin implements API {
   }
   
   @Override
+  public Location randomLocation(@NotNull TeleportLocation location) {
+    return randomLocation(location.toLocation(), location.getRadius());
+  }
+  
+  @Override
   public boolean isUsingPrefix() {
     return usePrefix;
   }
@@ -364,8 +375,20 @@ public class SyntaxRTP extends JavaPlugin implements API {
     final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
     field.setAccessible(true);
     final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
-    commandMap.register(getName(), new RTPCommand(this, pluginConfig));
+    commandMap.register(getName(), new RTPCommand(this, pluginConfig, getCommandAliases()));
     field.setAccessible(false);
+  }
+  
+  private List<String> getCommandAliases() {
+    final List<String> list = new ArrayList<>(pluginConfig.getAliases().length);
+    
+    for (String alias : pluginConfig.getAliases()) {
+      final String[] splited = alias.split(" ");
+      if (splited.length > 0)
+        list.add(splited[0]);
+    }
+    
+    return list;
   }
   
   public void sync(Runnable runnable) {

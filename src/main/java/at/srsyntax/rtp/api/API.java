@@ -59,6 +59,7 @@ public interface API {
   long hasCooldown(@NotNull Player player, @NotNull Cooldown cooldown);
   long hasCooldown(@NotNull Player player, @NotNull TeleportLocation location);
   Location randomLocation(@NotNull Location location, @NotNull Radius radius);
+  Location randomLocation(@NotNull TeleportLocation location);
   
   boolean isUsingPrefix();
   void setUsingPrefix(boolean using);

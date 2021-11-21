@@ -45,8 +45,8 @@ public class RTPCommand extends Command {
   private final MessageConfig messageConfig;
   private final PermissionConfig permissionConfig;
 
-  public RTPCommand(SyntaxRTP syntaxRTP, PluginConfig config) {
-    super("srtp", "Teleport to a random location", "/srtp", new ArrayList<>(List.of(config.getAliases())));
+  public RTPCommand(SyntaxRTP syntaxRTP, PluginConfig config, List<String> aliases) {
+    super("srtp", "Teleport to a random location", "/srtp", aliases);
     this.syntaxRTP = syntaxRTP;
     this.messageConfig = config.getMessages();
     this.permissionConfig = config.getPermissions();
