@@ -63,4 +63,6 @@ public interface API {
   
   boolean isUsingPrefix();
   void setUsingPrefix(boolean using);
+  
+  void reload() throws Exception;
 }

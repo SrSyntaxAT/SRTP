@@ -89,6 +89,9 @@ public class Message {
   public static String replace(String message, Map<String, String> replaces) {
     if (replaces == null) replaces = new HashMap<>();
 
+    for (MessageType type : MessageType.values())
+      message = message.replace(type.name() + ";", "");
+    
     for (Map.Entry<String, String> entry : replaces.entrySet())
       message = message.replace(entry.getKey(), entry.getValue());
 
@@ -96,7 +99,7 @@ public class Message {
   }
 
   public static String replace(String prefix, String message, Map<String, String> replaces) {
-    return prefix == null ? "" : replace(prefix, null) + replace(message, replaces);
+    return (SyntaxRTP.getAPI().isUsingPrefix() ? (prefix == null ? "" : replace(prefix, null)) : "") + replace(message, replaces);
   }
 
   @Override

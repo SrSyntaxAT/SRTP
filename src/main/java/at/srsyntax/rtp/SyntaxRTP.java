@@ -12,14 +12,17 @@ import at.srsyntax.rtp.api.teleport.Cooldown;
 import at.srsyntax.rtp.api.teleport.Radius;
 import at.srsyntax.rtp.api.teleport.TeleportLocation;
 import at.srsyntax.rtp.command.RTPCommand;
+import at.srsyntax.rtp.command.ReloadCommand;
 import at.srsyntax.rtp.config.LocationConfig;
 import at.srsyntax.rtp.config.exception.ConfigLoadException;
 import at.srsyntax.rtp.config.MessageConfig;
 import at.srsyntax.rtp.config.PermissionConfig;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.impl.CountdownImpl;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -64,26 +67,33 @@ import java.util.concurrent.TimeUnit;
  * SOFTWARE.
  */
 public class SyntaxRTP extends JavaPlugin implements API {
-
+  
+  public static final String METADATA_COOLDOWN_KEY = "srtpc:#";
   private static SyntaxRTP instance;
 
+  private Metrics metrics;
   private PluginConfig pluginConfig;
   private boolean usePrefix = true;
-
-  public static final String METADATA_COOLDOWN_KEY = "srtpc:#";
 
   @Override
   public void onEnable() {
     try {
       instance = this;
-
-      pluginConfig = loadConfig();
-      registerCommand();
+      
+      reload();
+      metrics = new Metrics(this, 13408);
 
     } catch (Exception exception) {
       exception.printStackTrace();
       Bukkit.getPluginManager().disablePlugin(this);
     }
+  }
+  
+  @Override
+  public void reload() throws Exception {
+    pluginConfig = loadConfig();
+    setUsingPrefix(pluginConfig.isUsePrefix());
+    registerCommand();
   }
 
   private void registerMessagesForCountdown(Countdown countdown, String[] messages, String prefix) {
@@ -246,6 +256,9 @@ public class SyntaxRTP extends JavaPlugin implements API {
   }
   
   private String filterAliases(String command) {
+    if (command.equalsIgnoreCase("srtp"))
+      return pluginConfig.getDefaultLocation();
+    
     for (String alias : pluginConfig.getAliases()) {
       if (alias.toLowerCase().startsWith(command.toLowerCase())) {
         final String[] splited = alias.split(" ");
@@ -375,7 +388,14 @@ public class SyntaxRTP extends JavaPlugin implements API {
     final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
     field.setAccessible(true);
     final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
+    
+    final Command command = commandMap.getCommand(getName());
+    if (command != null)
+      commandMap.getCommands().remove(command);
+    
     commandMap.register(getName(), new RTPCommand(this, pluginConfig, getCommandAliases()));
+    commandMap.register(getName(), new ReloadCommand(this));
+    
     field.setAccessible(false);
   }
   
@@ -401,7 +421,7 @@ public class SyntaxRTP extends JavaPlugin implements API {
         new PluginConfig(
             false,
             true,
-            new String[]{"randomteleport", "rtp", "farming farming_world"},
+            new String[]{"randomteleport", "rtp", "farming farming_world_2"},
           "farming_world",
           new LocationConfig[]{
               new LocationConfig(
@@ -421,7 +441,8 @@ public class SyntaxRTP extends JavaPlugin implements API {
                 "srtp.command.teleport",
                 "srtp.command.teleport.other",
                 "srtp.command.teleport.countdown.bypass.*",
-                "srtp.command.teleport.cooldown.bypass.*"
+                "srtp.command.teleport.cooldown.bypass.*",
+              "srtp.command.reload"
             ),
             new MessageConfig(
                 new String[]{
@@ -435,7 +456,9 @@ public class SyntaxRTP extends JavaPlugin implements API {
                 MessageType.CHAT.name() + ";&cYou are not authorized to do that! :/",
                 MessageType.CHAT.name() + ";&cAn error occurred while teleporting! :c",
                 MessageType.CHAT.name() + ";&cPlayer was not found!",
-                "second", "seconds"
+              MessageType.CHAT.name() + ";&cSyntaxRTP will be reloaded!",
+              MessageType.CHAT.name() + ";&4An error occurred during reload!!",
+              "second", "seconds"
             )
         ),
         new File(getDataFolder(), "config.json")

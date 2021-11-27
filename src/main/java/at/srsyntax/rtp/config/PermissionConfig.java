@@ -25,13 +25,14 @@ package at.srsyntax.rtp.config;
  */
 public class PermissionConfig {
 
-  private final String teleport, teleportOther, teleportCountdownBypass, teleportCooldownBypass;
+  private final String teleport, teleportOther, teleportCountdownBypass, teleportCooldownBypass, reload;
 
-  public PermissionConfig(String teleport, String teleportOther, String teleportCountdownBypass, String teleportCooldownBypass) {
+  public PermissionConfig(String teleport, String teleportOther, String teleportCountdownBypass, String teleportCooldownBypass, String reload) {
     this.teleport = teleport;
     this.teleportOther = teleportOther;
     this.teleportCountdownBypass = teleportCountdownBypass;
     this.teleportCooldownBypass = teleportCooldownBypass;
+    this.reload = reload;
   }
 
   public String getTeleport() {
@@ -48,5 +49,9 @@ public class PermissionConfig {
 
   public String getTeleportCooldownBypass() {
     return teleportCooldownBypass;
+  }
+  
+  public String getReload() {
+    return reload;
   }
 }

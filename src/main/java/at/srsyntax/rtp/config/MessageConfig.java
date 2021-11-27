@@ -26,10 +26,10 @@ package at.srsyntax.rtp.config;
 public class MessageConfig {
 
   private final String[] teleportCountdown;
-  private final String prefix, teleportedWithoutCountdown, teleportOther, teleportCooldownError, noPermission, teleportError, playerNotFound;
+  private final String prefix, teleportedWithoutCountdown, teleportOther, teleportCooldownError, noPermission, teleportError, playerNotFound, reload, reloadError;
   private final String seconds, second;
 
-  public MessageConfig(String[] teleportCountdown, String prefix, String teleportedWithoutCountdown, String teleportOther, String teleportCooldownError, String noPermission, String teleportError, String playerNotFound, String second, String seconds) {
+  public MessageConfig(String[] teleportCountdown, String prefix, String teleportedWithoutCountdown, String teleportOther, String teleportCooldownError, String noPermission, String teleportError, String playerNotFound, String reload, String reloadError, String second, String seconds) {
     this.teleportCountdown = teleportCountdown;
     this.prefix = prefix;
     this.teleportedWithoutCountdown = teleportedWithoutCountdown;
@@ -38,6 +38,8 @@ public class MessageConfig {
     this.noPermission = noPermission;
     this.teleportError = teleportError;
     this.playerNotFound = playerNotFound;
+    this.reload = reload;
+    this.reloadError = reloadError;
     this.second = second;
     this.seconds = seconds;
   }
@@ -69,7 +71,11 @@ public class MessageConfig {
   public String getPrefix() {
     return prefix;
   }
-
+  
+  public String getReload() {
+    return reload;
+  }
+  
   public String getSeconds() {
     return seconds;
   }
@@ -80,5 +86,9 @@ public class MessageConfig {
 
   public String getTeleportedWithoutCountdown() {
     return teleportedWithoutCountdown;
+  }
+  
+  public String getReloadError() {
+    return reloadError;
   }
 }
