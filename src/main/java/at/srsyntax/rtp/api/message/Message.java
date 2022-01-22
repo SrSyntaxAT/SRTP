@@ -1,6 +1,8 @@
 package at.srsyntax.rtp.api.message;
 
 import at.srsyntax.rtp.SyntaxRTP;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -73,13 +75,19 @@ public class Message {
   public void send(Map<String, String> replaces) {
     switch (type) {
       case CHAT:
-        target.sendMessage(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces));
+        target.spigot().sendMessage(
+            ChatMessageType.SYSTEM,
+            new TextComponent(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces))
+        );
         break;
       case TITLE:
-        target.sendTitle(prefix == null ? "" : replace(prefix, null), replace(message, replaces));
+        target.sendTitle(prefix == null ? "" : replace(prefix, null), replace(message, replaces), 10, 70, 20);
         break;
       case ACTIONBAR:
-        target.sendActionBar(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces));
+        target.spigot().sendMessage(
+            ChatMessageType.ACTION_BAR,
+            new TextComponent(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces))
+        );
         break;
       default:
         throw new IllegalArgumentException();

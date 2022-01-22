@@ -82,7 +82,6 @@ public class SyntaxRTP extends JavaPlugin implements API {
       
       reload();
       metrics = new Metrics(this, 13408);
-
     } catch (Exception exception) {
       exception.printStackTrace();
       Bukkit.getPluginManager().disablePlugin(this);
@@ -94,6 +93,9 @@ public class SyntaxRTP extends JavaPlugin implements API {
     pluginConfig = loadConfig();
     setUsingPrefix(pluginConfig.isUsePrefix());
     registerCommand();
+
+    if (pluginConfig.isPaperAsync() && !getServer().getName().equalsIgnoreCase("Paper"))
+      getLogger().warning("Paper async teleport was enabled, but does not run on a paper server.");
   }
 
   private void registerMessagesForCountdown(Countdown countdown, String[] messages, String prefix) {
