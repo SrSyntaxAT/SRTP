@@ -206,7 +206,8 @@ public class SyntaxRTP extends JavaPlugin implements API {
     final MessageConfig messageConfig = pluginConfig.getMessages();
   
     checkCooldown(target, location.getCooldown(), messageConfig);
-    buyTeleport(target, location.getPrice());
+    if (vaultSupported())
+      buyTeleport(target, location.getPrice());
     final Location newLocation = randomLocation(location);
     final Callback callback = createCallback(target, newLocation, location.getName());
   
