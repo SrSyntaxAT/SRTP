@@ -1,7 +1,3 @@
 TODO for the next versions
 
-  Vault Support
-  version check
-
   Readme File
-  Upload to SpigotMC / SpigotMC description

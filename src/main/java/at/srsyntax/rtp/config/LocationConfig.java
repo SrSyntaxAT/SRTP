@@ -32,15 +32,16 @@ import org.bukkit.Location;
 public class LocationConfig implements TeleportLocation {
 
   private final String name, world;
-  private final double x, z;
+  private final double x, z, price;
   private final Radius radius;
   private final short cooldown, countdown;
 
-  public LocationConfig(String name, String world, double x, double z, Radius radius, short cooldown, short countdown) {
+  public LocationConfig(String name, String world, double x, double z, double price, Radius radius, short cooldown, short countdown) {
     this.name = name;
     this.world = world;
     this.x = x;
     this.z = z;
+    this.price = price;
     this.radius = radius;
     this.cooldown = cooldown;
     this.countdown = countdown;
@@ -65,7 +66,12 @@ public class LocationConfig implements TeleportLocation {
   public short getCountdown() {
     return countdown;
   }
-  
+
+  @Override
+  public double getPrice() {
+    return price;
+  }
+
   @Override
   public Cooldown getCooldown() {
     return new Cooldown(name, cooldown);

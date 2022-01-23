@@ -39,20 +39,20 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface API {
   
-  boolean teleport(@NotNull Player target, @NotNull Location location, @NotNull Radius radius) throws TeleportException;
-  boolean teleport(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, int countdown) throws TeleportException;
-  boolean teleport(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, @Nullable Cooldown cooldown, int countdown) throws TeleportException;
+  boolean teleport(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius) throws TeleportException;
+  boolean teleport(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, int countdown) throws TeleportException;
+  boolean teleport(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, @Nullable Cooldown cooldown, int countdown) throws TeleportException;
   boolean teleport(@NotNull Player target, @NotNull TeleportLocation location) throws TeleportException;
   
-  CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, @NotNull Radius radius) throws TeleportException;
-  CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, int countdown) throws TeleportException;
-  CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, @Nullable Cooldown cooldown, int countdown) throws TeleportException;
+  CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius) throws TeleportException;
+  CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, int countdown) throws TeleportException;
+  CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, @Nullable Cooldown cooldown, int countdown) throws TeleportException;
   CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull TeleportLocation location) throws TeleportException;
   
   Countdown createCountdown(int time, @NotNull Callback callback);
   
-  TeleportLocation constructLocation(@NotNull String name, @NotNull Location location, @NotNull Radius radius, short cooldown, short countdown);
-  TeleportLocation constructLocation(@NotNull String name, @NotNull String world, double x, double z, @NotNull Radius radius, short cooldown, short countdown);
+  TeleportLocation constructLocation(@NotNull String name, @NotNull Location location, double costs, @NotNull Radius radius, short cooldown, short countdown);
+  TeleportLocation constructLocation(@NotNull String name, @NotNull String world, double x, double z, double costs, @NotNull Radius radius, short cooldown, short countdown);
   TeleportLocation getLocation(@NotNull String name) throws LocationNotFound;
   TeleportLocation getCommandAliasLocation(@NotNull String command) throws LocationNotFound;
   
@@ -65,4 +65,6 @@ public interface API {
   void setUsingPrefix(boolean using);
   
   void reload() throws Exception;
+
+  boolean vaultSupported();
 }

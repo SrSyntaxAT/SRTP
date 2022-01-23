@@ -19,6 +19,8 @@ import at.srsyntax.rtp.config.MessageConfig;
 import at.srsyntax.rtp.config.PermissionConfig;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.impl.CountdownImpl;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -28,6 +30,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.SimplePluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -69,9 +72,13 @@ import java.util.concurrent.TimeUnit;
 public class SyntaxRTP extends JavaPlugin implements API {
   
   public static final String METADATA_COOLDOWN_KEY = "srtpc:#";
+  public static final int RESOURCE_ID = 99428;
+
   private static SyntaxRTP instance;
 
   private Metrics metrics;
+  private Economy economy = null;
+
   private PluginConfig pluginConfig;
   private boolean usePrefix = true;
 
@@ -82,6 +89,10 @@ public class SyntaxRTP extends JavaPlugin implements API {
       
       reload();
       metrics = new Metrics(this, 13408);
+      setupEconomy();
+
+      if (!SpigotVersionCheck.check(getDescription().getVersion(), RESOURCE_ID))
+        getLogger().warning("A newer version is available!");
     } catch (Exception exception) {
       exception.printStackTrace();
       Bukkit.getPluginManager().disablePlugin(this);
@@ -96,6 +107,20 @@ public class SyntaxRTP extends JavaPlugin implements API {
 
     if (pluginConfig.isPaperAsync() && !getServer().getName().equalsIgnoreCase("Paper"))
       getLogger().warning("Paper async teleport was enabled, but does not run on a paper server.");
+  }
+
+  private void setupEconomy() {
+    if (getServer().getPluginManager().getPlugin("Vault") == null) return;
+
+    final RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+    if (rsp == null) return;
+
+    economy = rsp.getProvider();
+  }
+
+  @Override
+  public boolean vaultSupported() {
+    return economy != null;
   }
 
   private void registerMessagesForCountdown(Countdown countdown, String[] messages, String prefix) {
@@ -156,20 +181,20 @@ public class SyntaxRTP extends JavaPlugin implements API {
   }
   
   @Override
-  public boolean teleport(@NotNull Player target, @NotNull Location location, @NotNull Radius radius) throws TeleportException {
-    return teleport(target, location, radius, 0);
+  public boolean teleport(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius) throws TeleportException {
+    return teleport(target, location, costs, radius, 0);
   }
   
   @Override
-  public boolean teleport(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, int countdown) throws TeleportException {
-    return teleport(target, location, radius, null, countdown);
+  public boolean teleport(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, int countdown) throws TeleportException {
+    return teleport(target, location, costs, radius, null, countdown);
   }
   
   @Override
-  public boolean teleport(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, Cooldown cooldown, int countdown) throws TeleportException {
+  public boolean teleport(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, Cooldown cooldown, int countdown) throws TeleportException {
     final TeleportLocation teleportLocation = constructLocation(
       cooldown == null ? "default" : cooldown.getKey(),
-      location, radius,
+      location, costs, radius,
       cooldown == null ? (short) 0 : cooldown.getTime(), (short) 0
     );
     
@@ -181,6 +206,7 @@ public class SyntaxRTP extends JavaPlugin implements API {
     final MessageConfig messageConfig = pluginConfig.getMessages();
   
     checkCooldown(target, location.getCooldown(), messageConfig);
+    buyTeleport(target, location.getPrice());
     final Location newLocation = randomLocation(location);
     final Callback callback = createCallback(target, newLocation, location.getName());
   
@@ -194,6 +220,17 @@ public class SyntaxRTP extends JavaPlugin implements API {
       return false;
     }
   }
+
+  private void buyTeleport(Player target, double price) throws TeleportException {
+    if (price == 0) return;
+    if (!target.isOnline())
+      throw new TeleportException(pluginConfig.getMessages().getPlayerNotFound());
+
+    if (price > economy.getBalance(target))
+      throw new TeleportException(pluginConfig.getMessages().getNotEnoughtMoney());
+
+    economy.withdrawPlayer(target, price);
+  }
   
   private boolean hasCountdown(Player player, TeleportLocation location) {
     return
@@ -203,18 +240,18 @@ public class SyntaxRTP extends JavaPlugin implements API {
   }
   
   @Override
-  public CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, @NotNull Radius radius) throws TeleportException {
-    return CompletableFuture.supplyAsync(() -> teleport(target, location, radius));
+  public CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius) throws TeleportException {
+    return CompletableFuture.supplyAsync(() -> teleport(target, location, costs, radius));
   }
   
   @Override
-  public CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, int countdown) throws TeleportException {
-    return CompletableFuture.supplyAsync(() -> teleport(target, location, radius, countdown));
+  public CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, int countdown) throws TeleportException {
+    return CompletableFuture.supplyAsync(() -> teleport(target, location, costs, radius, countdown));
   }
   
   @Override
-  public CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, @NotNull Radius radius, Cooldown cooldown, int countdown) throws TeleportException {
-    return CompletableFuture.supplyAsync(() -> teleport(target, location, radius, cooldown, countdown));
+  public CompletableFuture<Boolean> teleportAsync(@NotNull Player target, @NotNull Location location, double costs, @NotNull Radius radius, Cooldown cooldown, int countdown) throws TeleportException {
+    return CompletableFuture.supplyAsync(() -> teleport(target, location, costs, radius, cooldown, countdown));
   }
   
   @Override
@@ -228,13 +265,13 @@ public class SyntaxRTP extends JavaPlugin implements API {
   }
   
   @Override
-  public TeleportLocation constructLocation(@NotNull String name, @NotNull Location location, @NotNull Radius radius, short cooldown, short countdown) {
-    return constructLocation(name, location.getWorld().getName(), location.getX(), location.getZ(), radius, cooldown, countdown);
+  public TeleportLocation constructLocation(@NotNull String name, @NotNull Location location, double costs, @NotNull Radius radius, short cooldown, short countdown) {
+    return constructLocation(name, location.getWorld().getName(), location.getX(), location.getZ(), costs, radius, cooldown, countdown);
   }
   
   @Override
-  public TeleportLocation constructLocation(@NotNull String name, @NotNull String world, double x, double z, @NotNull Radius radius, short cooldown, short countdown) {
-    return new LocationConfig(name, world, x, z, radius, cooldown, countdown);
+  public TeleportLocation constructLocation(@NotNull String name, @NotNull String world, double x, double z, double costs, @NotNull Radius radius, short cooldown, short countdown) {
+    return new LocationConfig(name, world, x, z, costs, radius, cooldown, countdown);
   }
   
   @Override
@@ -429,13 +466,13 @@ public class SyntaxRTP extends JavaPlugin implements API {
               new LocationConfig(
                 "farming_world",
                 "world", 0D, 0D,
-                new Radius(150, 3000),
+                  700D, new Radius(150, 3000),
                 (short) 120, (short) 5
               ),
               new LocationConfig(
                 "farming_world_2",
                 "world", 6000D, 6000D,
-                new Radius(150, 3000),
+                  1000D, new Radius(150, 3000),
                 (short) 120, (short) 5
               )
             },
@@ -460,7 +497,8 @@ public class SyntaxRTP extends JavaPlugin implements API {
                 MessageType.CHAT.name() + ";&cPlayer was not found!",
               MessageType.CHAT.name() + ";&cSyntaxRTP will be reloaded!",
               MessageType.CHAT.name() + ";&4An error occurred during reload!!",
-              "second", "seconds"
+                MessageType.ACTIONBAR.name() + ";&4You do not have enough money!",
+                "second", "seconds"
             )
         ),
         new File(getDataFolder(), "config.json")

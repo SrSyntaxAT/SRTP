@@ -1,11 +1,14 @@
-package at.srsyntax.rtp.api.teleport;
+package at.srsyntax.rtp;
 
-import org.bukkit.Location;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 /*
  * MIT License
  *
- * Copyright (c) 2021 Marcel Haberl
+ * Copyright (c) 2022 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +28,12 @@ import org.bukkit.Location;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface TeleportLocation {
+public class SpigotVersionCheck {
 
-	String getName();
-	Radius getRadius();
-	short getCountdown();
-	Cooldown getCooldown();
-	Location toLocation();
-	double getPrice();
+  // source: https://gitlab.com/-/snippets/2005348
+  public static boolean check(String pluginVersion, int resourceId) throws IOException {
+    final URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + resourceId);
+    return new BufferedReader(new InputStreamReader(url.openConnection().getInputStream()))
+        .readLine().equalsIgnoreCase(pluginVersion);
+  }
 }

@@ -26,10 +26,12 @@ package at.srsyntax.rtp.config;
 public class MessageConfig {
 
   private final String[] teleportCountdown;
-  private final String prefix, teleportedWithoutCountdown, teleportOther, teleportCooldownError, noPermission, teleportError, playerNotFound, reload, reloadError;
+  private final String prefix, noPermission, playerNotFound, reload, reloadError;
+  private final String teleportedWithoutCountdown, teleportOther, teleportCooldownError, teleportError;
+  private final String notEnoughtMoney;
   private final String seconds, second;
 
-  public MessageConfig(String[] teleportCountdown, String prefix, String teleportedWithoutCountdown, String teleportOther, String teleportCooldownError, String noPermission, String teleportError, String playerNotFound, String reload, String reloadError, String second, String seconds) {
+  public MessageConfig(String[] teleportCountdown, String prefix, String teleportedWithoutCountdown, String teleportOther, String teleportCooldownError, String noPermission, String teleportError, String playerNotFound, String reload, String reloadError, String notEnoughtMoney, String second, String seconds) {
     this.teleportCountdown = teleportCountdown;
     this.prefix = prefix;
     this.teleportedWithoutCountdown = teleportedWithoutCountdown;
@@ -40,6 +42,7 @@ public class MessageConfig {
     this.playerNotFound = playerNotFound;
     this.reload = reload;
     this.reloadError = reloadError;
+    this.notEnoughtMoney = notEnoughtMoney;
     this.second = second;
     this.seconds = seconds;
   }
@@ -90,5 +93,9 @@ public class MessageConfig {
   
   public String getReloadError() {
     return reloadError;
+  }
+
+  public String getNotEnoughtMoney() {
+    return notEnoughtMoney;
   }
 }

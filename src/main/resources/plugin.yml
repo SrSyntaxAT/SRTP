@@ -1,6 +1,9 @@
 main: at.srsyntax.rtp.SyntaxRTP
 name: SyntaxRTP
-version: 1.4
+version: ${version}
+
+softdepend:
+  - Vault
 
 author: SrSyntaxAT
 website: https://srsyntax.at/
