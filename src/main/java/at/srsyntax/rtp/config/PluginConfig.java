@@ -74,7 +74,7 @@ public class PluginConfig {
 
   @Override
   public String toString() {
-    return new GsonBuilder().setPrettyPrinting().create().toJson(this);
+    return new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(this);
   }
 
   public boolean isPaperAsync() {
