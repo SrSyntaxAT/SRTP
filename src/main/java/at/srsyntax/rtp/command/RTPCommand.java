@@ -1,8 +1,8 @@
 package at.srsyntax.rtp.command;
 
 import at.srsyntax.rtp.SyntaxRTP;
+import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.api.exception.LocationNotFound;
-import at.srsyntax.rtp.api.exception.TeleportException;
 import at.srsyntax.rtp.api.message.Message;
 import at.srsyntax.rtp.api.teleport.TeleportLocation;
 import at.srsyntax.rtp.config.MessageConfig;
@@ -41,13 +41,12 @@ import java.util.*;
  */
 public class RTPCommand extends Command {
 
-  private final SyntaxRTP syntaxRTP;
+  private final API api = SyntaxRTP.getAPI();
   private final MessageConfig messageConfig;
   private final PermissionConfig permissionConfig;
 
   public RTPCommand(SyntaxRTP syntaxRTP, PluginConfig config, List<String> aliases) {
     super("srtp", "Teleport to a random location", "/srtp", aliases);
-    this.syntaxRTP = syntaxRTP;
     this.messageConfig = config.getMessages();
     this.permissionConfig = config.getPermissions();
   }
@@ -75,8 +74,8 @@ public class RTPCommand extends Command {
     }
   
     try {
-      final TeleportLocation location = syntaxRTP.getCommandAliasLocation(label);
-      syntaxRTP.teleportAsync(target, location).handle((aBoolean, throwable) -> {
+      final TeleportLocation location = api.getCommandAliasLocation(label);
+      api.teleportAsync(target, location).handle((aBoolean, throwable) -> {
         if (throwable == null) {
           if (!aBoolean)
             new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
@@ -113,8 +112,8 @@ public class RTPCommand extends Command {
     }
   
     try {
-      final TeleportLocation location = syntaxRTP.getCommandAliasLocation(label);
-      syntaxRTP.teleportAsync(target, location).handle((aBoolean, throwable) -> {
+      final TeleportLocation location = api.getCommandAliasLocation(label);
+      api.teleportAsync(target, location).handle((aBoolean, throwable) -> {
         if (throwable == null) {
           commandSender.sendMessage(Message.replace(prefix, messageConfig.getTeleportOther().split(";")[1], replaces));
           if (!aBoolean)
@@ -144,8 +143,8 @@ public class RTPCommand extends Command {
     }
   
     try {
-      final TeleportLocation location = syntaxRTP.getCommandAliasLocation(label);
-      syntaxRTP.teleportAsync(target, location).handle((aBoolean, throwable) -> {
+      final TeleportLocation location = api.getCommandAliasLocation(label);
+      api.teleportAsync(target, location).handle((aBoolean, throwable) -> {
         if (throwable == null) {
           new Message(sender, messageConfig.getTeleportOther()).prefix(prefix).send(replaces);
           if (!aBoolean)

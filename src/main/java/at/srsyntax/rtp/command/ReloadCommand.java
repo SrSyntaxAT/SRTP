@@ -30,13 +30,11 @@ import java.util.Collections;
  * MANUFACTURE, USE, OR SELL ANYTHING THAT IT  MAY DESCRIBE, IN WHOLE OR IN PART.
  */
 public class ReloadCommand extends Command {
-	
-	private final SyntaxRTP plugin;
+
 	private final PluginConfig config;
 	
 	public ReloadCommand(SyntaxRTP plugin) {
 		super("srtpreload", "Reload the SRTP Plugin", "/srtpreload", Collections.emptyList());
-		this.plugin = plugin;
 		this.config = plugin.getPluginConfig();
 	}
 	
@@ -47,7 +45,7 @@ public class ReloadCommand extends Command {
 		if (sender.hasPermission(config.getPermissions().getReload())) {
 			try {
 				sendMessage(sender, config.getMessages().getReload(), prefix);
-				plugin.reload();
+				SyntaxRTP.getAPI().reload();
 			} catch (Exception exception) {
 				sendMessage(sender, config.getMessages().getReloadError(), prefix);
 				exception.printStackTrace();
