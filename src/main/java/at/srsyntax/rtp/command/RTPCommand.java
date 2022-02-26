@@ -107,7 +107,7 @@ public class RTPCommand extends Command {
 
   private boolean otherConsole(CommandSender commandSender, Player target, String label, boolean available, Map<String, String> replaces, String prefix) {
     if (!available) {
-      commandSender.sendMessage(Message.replace(prefix, messageConfig.getPlayerNotFound(), null));
+      commandSender.sendMessage(new Message(messageConfig.getPlayerNotFound()).prefix(prefix).replace());
       return false;
     }
   
@@ -115,11 +115,14 @@ public class RTPCommand extends Command {
       final TeleportLocation location = api.getCommandAliasLocation(label);
       api.teleportAsync(target, location).handle((aBoolean, throwable) -> {
         if (throwable == null) {
-          commandSender.sendMessage(Message.replace(prefix, messageConfig.getTeleportOther().split(";")[1], replaces));
+          final String message = new Message(messageConfig.getTeleportOther().split(";")[1])
+              .addReplaces(replaces)
+              .replace();
+          commandSender.sendMessage(message);
           if (!aBoolean)
             new Message(target, messageConfig.getTeleportedWithoutCountdown()).prefix(prefix).send();
         } else {
-          commandSender.sendMessage(Message.replace(prefix, throwable.getCause().getMessage(), null));
+          commandSender.sendMessage(new Message(throwable.getCause().getMessage()).prefix(prefix).replace());
         }
         return true;
       });

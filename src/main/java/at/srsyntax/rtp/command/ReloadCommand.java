@@ -60,6 +60,6 @@ public class ReloadCommand extends Command {
 		if (sender instanceof Player)
 			new Message((Player) sender, message).prefix(prefix).send();
 		else
-			sender.sendMessage(Message.replace(prefix, message, null));
+			sender.sendMessage(new Message(message).prefix(prefix).replace());
 	}
 }

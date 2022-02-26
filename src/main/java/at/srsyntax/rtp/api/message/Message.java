@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /*
@@ -38,6 +39,8 @@ public class Message {
   private final String message;
   private final MessageType type;
 
+  private final Map<String, String> replaces = new LinkedHashMap<>();
+
   private String prefix;
 
   public Message(Player target, String message, MessageType type) {
@@ -54,7 +57,7 @@ public class Message {
     this(target, message.split(";"));
   }
 
-  public Message(String[] messages) {
+  public Message(String... messages) {
     this(null, messages);
   }
 
@@ -77,16 +80,16 @@ public class Message {
       case CHAT:
         target.spigot().sendMessage(
             ChatMessageType.SYSTEM,
-            new TextComponent(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces))
+            new TextComponent(replaceChatMessage())
         );
         break;
       case TITLE:
-        target.sendTitle(prefix == null ? "" : replace(prefix, null), replace(message, replaces), 10, 70, 20);
+        target.sendTitle(prefix == null ? "" : replace(prefix), replace(), 10, 70, 20);
         break;
       case ACTIONBAR:
         target.spigot().sendMessage(
             ChatMessageType.ACTION_BAR,
-            new TextComponent(replace(SyntaxRTP.getAPI().isUsingPrefix() ? prefix : null, message, replaces))
+            new TextComponent(replaceChatMessage())
         );
         break;
       default:
@@ -94,20 +97,32 @@ public class Message {
     }
   }
 
-  public static String replace(String message, Map<String, String> replaces) {
-    if (replaces == null) replaces = new HashMap<>();
+  private String replaceChatMessage() {
+    return (prefix == null ? "" : replace(prefix) + " ") + replace(message);
+  }
 
+  public Message addReplace(String key, String value) {
+    this.replaces.put(key, value);
+    return this;
+  }
+
+  public Message addReplaces(Map<String, String> replaces) {
+    this.replaces.putAll(replaces);
+    return this;
+  }
+
+  public  String replace() {
+    return replace(message);
+  }
+
+  private String replace(String message) {
     for (MessageType type : MessageType.values())
       message = message.replace(type.name() + ";", "");
-    
+
     for (Map.Entry<String, String> entry : replaces.entrySet())
       message = message.replace(entry.getKey(), entry.getValue());
 
     return message.replace("&", "§");
-  }
-
-  public static String replace(String prefix, String message, Map<String, String> replaces) {
-    return (SyntaxRTP.getAPI().isUsingPrefix() ? (prefix == null ? "" : replace(prefix, null)) : "") + replace(message, replaces);
   }
 
   @Override
