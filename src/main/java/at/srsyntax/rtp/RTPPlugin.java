@@ -1,11 +1,11 @@
-package at.srsyntax.rtp.api.countdown;
+package at.srsyntax.rtp;
 
-import at.srsyntax.rtp.api.message.Message;
+import org.bukkit.plugin.java.JavaPlugin;
 
 /*
  * MIT License
  *
- * Copyright (c) 2021 Marcel Haberl
+ * Copyright (c) 2022 Marcel Haberl
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,10 @@ import at.srsyntax.rtp.api.message.Message;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface Countdown {
+public class RTPPlugin extends JavaPlugin {
 
-  Countdown addMessage(int time, Message message);
+  @Override
+  public void onEnable() {
 
-  int getTime();
-  
-  boolean isRunning();
-
-  void start();
-  void cancel();
+  }
 }

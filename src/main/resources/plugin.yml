@@ -1,4 +1,4 @@
-main: at.srsyntax.rtp.SyntaxRTP
+main: at.srsyntax.rtp.RTPPlugin
 name: SyntaxRTP
 version: ${version}
 

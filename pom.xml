@@ -6,12 +6,12 @@
 
     <groupId>at.srsyntax</groupId>
     <artifactId>srtp</artifactId>
-    <version>1.6.2</version>
+    <version>dev-2.0</version>
 
     <repositories>
         <repository>
-            <id>papermc</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <id>spigot-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -28,10 +28,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.17.1-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.18.1-R0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.bstats</groupId>
