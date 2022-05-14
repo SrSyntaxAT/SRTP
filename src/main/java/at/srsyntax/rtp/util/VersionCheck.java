@@ -1,8 +1,12 @@
-package at.srsyntax.rtp;
+package at.srsyntax.rtp.util;
 
-import at.srsyntax.rtp.util.VersionCheck;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.plugin.java.JavaPlugin;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
 /*
  * MIT License
@@ -27,26 +31,27 @@ import org.bukkit.plugin.java.JavaPlugin;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class RTPPlugin extends JavaPlugin {
+@AllArgsConstructor
+@Getter
+public class VersionCheck {
 
-  public static final int RESOURCE_ID = 99428, BSTATS_ID = 13408;
+  private final String currentVersion;
+  private final int ressouceId;
 
-  @Override
-  public void onEnable() {
+  public boolean check() throws IOException {
+    InputStreamReader inputStreamReader = null;
+    BufferedReader bufferedReader = null;
+
     try {
-      checkVersion();
-      new Metrics(this, BSTATS_ID);
-    } catch (Exception exception) {
-      getLogger().severe("Plugin could not be loaded successfully!");
-      exception.printStackTrace();
+      final URL url = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + this.ressouceId);
+
+      inputStreamReader = new InputStreamReader(url.openConnection().getInputStream());
+      bufferedReader = new BufferedReader(inputStreamReader);
+
+      return bufferedReader.readLine().equalsIgnoreCase(this.currentVersion);
+    } finally {
+      if (inputStreamReader != null) inputStreamReader.close();
+      if (bufferedReader != null) bufferedReader.close();
     }
-  }
-
-  private void checkVersion() {
-    try {
-      final VersionCheck check = new VersionCheck(getDescription().getVersion(), RESOURCE_ID);
-      if (check.check()) return;
-      getLogger().warning("The plugin is no longer up to date, please update the plugin.");
-    } catch (Exception ignored) {}
   }
 }
