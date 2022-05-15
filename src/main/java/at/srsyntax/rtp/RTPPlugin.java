@@ -1,7 +1,9 @@
 package at.srsyntax.rtp;
 
+import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.util.VersionCheck;
+import lombok.Getter;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,6 +33,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class RTPPlugin extends JavaPlugin {
 
   public static final int RESOURCE_ID = 99428, BSTATS_ID = 13408;
+  private static API api;
+
+  @Getter private PluginConfig config;
 
   @Override
   public void onEnable() {
@@ -38,7 +43,9 @@ public class RTPPlugin extends JavaPlugin {
       checkVersion();
       new Metrics(this, BSTATS_ID);
 
-      final PluginConfig config = (PluginConfig) PluginConfig.load(this, new PluginConfig());
+      api = new APIImpl(this);
+
+      config = (PluginConfig) PluginConfig.load(this, new PluginConfig());
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -47,9 +54,12 @@ public class RTPPlugin extends JavaPlugin {
 
   private void checkVersion() {
     try {
-      final VersionCheck check = new VersionCheck(getDescription().getVersion(), RESOURCE_ID);
-      if (check.check()) return;
+      if (new VersionCheck(getDescription().getVersion(), RESOURCE_ID).check()) return;
       getLogger().warning("The plugin is no longer up to date, please update the plugin.");
     } catch (Exception ignored) {}
+  }
+
+  public static API getApi() {
+    return api;
   }
 }

@@ -1,10 +1,9 @@
-package at.srsyntax.rtp.config;
+package at.srsyntax.rtp.api;
 
-import at.srsyntax.rtp.util.TeleportLocationCache;
-import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
+import at.srsyntax.rtp.api.location.TeleportLocation;
+import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * MIT License
@@ -29,19 +28,11 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Getter
-public class PluginConfig extends ConfigLoader {
+public interface API {
 
-  private final boolean prefix;
-
-  private final List<TeleportLocationCache> locations;
-
-  private final MessageConfig message;
-
-  public PluginConfig() {
-    this.prefix = true;
-    this.locations = new ArrayList<>();
-
-    this.message = new MessageConfig();
-  }
+  @Nullable TeleportLocation getLocation(@NotNull String name);
+  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown);
+  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, @Nullable String[] aliases);
+  void deleteLocation(@NotNull String name);
+  void deleteLocation(@NotNull TeleportLocation location);
 }

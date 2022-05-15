@@ -1,9 +1,12 @@
-package at.srsyntax.rtp.config;
+package at.srsyntax.rtp.util;
 
-import at.srsyntax.rtp.util.TeleportLocationCache;
+import at.srsyntax.rtp.api.location.TeleportLocation;
+import at.srsyntax.rtp.api.location.LocationCache;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /*
@@ -29,19 +32,24 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+@AllArgsConstructor
 @Getter
-public class PluginConfig extends ConfigLoader {
+public class TeleportLocationCache implements TeleportLocation {
 
-  private final boolean prefix;
+  private final String name;
+  private final LocationCache location;
 
-  private final List<TeleportLocationCache> locations;
+  private final String permission;
+  private final int countdown, cooldown;
 
-  private final MessageConfig message;
+  private final String[] aliases;
 
-  public PluginConfig() {
-    this.prefix = true;
-    this.locations = new ArrayList<>();
+  private final List<LocationCache> locationCaches = new LinkedList<>();
 
-    this.message = new MessageConfig();
+  @Override
+  public boolean hasPermission(CommandSender sender) {
+    final String prefix = "syntaxrtp.teleport.";
+    return sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + getName());
   }
+
 }

@@ -1,10 +1,8 @@
-package at.srsyntax.rtp.config;
+package at.srsyntax.rtp.api.location;
 
-import at.srsyntax.rtp.util.TeleportLocationCache;
-import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.List;
+import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 
 /*
  * MIT License
@@ -29,19 +27,29 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Getter
-public class PluginConfig extends ConfigLoader {
+@AllArgsConstructor
+public class LocationCache {
 
-  private final boolean prefix;
+  private final String world;
+  private final double x, y, z;
+  private final float yaw, pitch;
 
-  private final List<TeleportLocationCache> locations;
+  public LocationCache(Location location) {
+    this(
+        location.getWorld().getName(),
+        location.getX(),
+        location.getY(),
+        location.getZ(),
+        location.getYaw(),
+        location.getPitch()
+    );
+  }
 
-  private final MessageConfig message;
-
-  public PluginConfig() {
-    this.prefix = true;
-    this.locations = new ArrayList<>();
-
-    this.message = new MessageConfig();
+  public Location toBukkit() {
+    return new Location(
+        Bukkit.getWorld(world),
+        x, y, z,
+        yaw, pitch
+    );
   }
 }
