@@ -1,9 +1,4 @@
-package at.srsyntax.rtp;
-
-import at.srsyntax.rtp.config.PluginConfig;
-import at.srsyntax.rtp.util.VersionCheck;
-import org.bstats.bukkit.Metrics;
-import org.bukkit.plugin.java.JavaPlugin;
+package at.srsyntax.rtp.config;
 
 /*
  * MIT License
@@ -28,28 +23,6 @@ import org.bukkit.plugin.java.JavaPlugin;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class RTPPlugin extends JavaPlugin {
+public class PluginConfig extends ConfigLoader {
 
-  public static final int RESOURCE_ID = 99428, BSTATS_ID = 13408;
-
-  @Override
-  public void onEnable() {
-    try {
-      checkVersion();
-      new Metrics(this, BSTATS_ID);
-
-      final PluginConfig config = (PluginConfig) PluginConfig.load(this, new PluginConfig());
-    } catch (Exception exception) {
-      getLogger().severe("Plugin could not be loaded successfully!");
-      exception.printStackTrace();
-    }
-  }
-
-  private void checkVersion() {
-    try {
-      final VersionCheck check = new VersionCheck(getDescription().getVersion(), RESOURCE_ID);
-      if (check.check()) return;
-      getLogger().warning("The plugin is no longer up to date, please update the plugin.");
-    } catch (Exception ignored) {}
-  }
 }
