@@ -26,15 +26,11 @@ import lombok.Getter;
  * SOFTWARE.
  */
 @Getter
-public class PluginConfig extends ConfigLoader {
+public class MessageConfig {
 
-  private final boolean prefix;
+  private final String prefix;
 
-  private final MessageConfig message;
-
-  public PluginConfig() {
-    this.prefix = true;
-
-    this.message = new MessageConfig();
+  public MessageConfig() {
+    this.prefix = "&8[&6SyntaxRTP&8]";
   }
 }
