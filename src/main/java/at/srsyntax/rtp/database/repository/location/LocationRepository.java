@@ -2,6 +2,7 @@ package at.srsyntax.rtp.database.repository.location;
 
 import at.srsyntax.rtp.api.location.LocationCache;
 import at.srsyntax.rtp.api.location.TeleportLocation;
+import at.srsyntax.rtp.database.SQLRepository;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface LocationRepository {
+public interface LocationRepository extends SQLRepository {
 
   List<LocationCache> getLocations(TeleportLocation teleportLocation) throws SQLException;
   void removeLocation(LocationCache cache) throws SQLException;

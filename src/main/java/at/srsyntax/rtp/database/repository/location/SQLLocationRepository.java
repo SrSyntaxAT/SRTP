@@ -1,15 +1,14 @@
 package at.srsyntax.rtp.database.repository.location;
 
-import at.srsyntax.rtp.RTPPlugin;
 import at.srsyntax.rtp.api.location.LocationCache;
 import at.srsyntax.rtp.api.location.TeleportLocation;
-import at.srsyntax.rtp.database.SQLRepository;
+import at.srsyntax.rtp.database.Database;
+import lombok.AllArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,27 +35,26 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class SQLLocationRepository implements LocationRepository, SQLRepository {
+@AllArgsConstructor
+public class SQLLocationRepository implements LocationRepository {
 
-  private final RTPPlugin plugin;
-  private final Connection connection;
-
-  public SQLLocationRepository(RTPPlugin plugin, Connection connection) throws SQLException {
-    this.plugin = plugin;
-    this.connection = connection;
-    createTable();
-  }
+  private final Database database;
 
   @Override
   public void createTable() throws SQLException {
     final String sql = "CREATE TABLE IF NOT EXISTS location_cache (rtp TEXT, id TEXT, location TEXT)";
-    connection.createStatement().execute(sql);
+    connection().createStatement().execute(sql);
+  }
+
+  @Override
+  public Connection connection() {
+    return database.getConnection();
   }
 
   @Override
   public List<LocationCache> getLocations(TeleportLocation teleportLocation) throws SQLException {
     final String sql = "SEKECT id, location FROM location_cache WHERE rtp = ?";
-    final PreparedStatement statement = connection.prepareStatement(sql);
+    final PreparedStatement statement = connection().prepareStatement(sql);
     statement.setString(1, teleportLocation.getName());
     return readResultSet(statement.executeQuery());
   }
@@ -75,7 +73,7 @@ public class SQLLocationRepository implements LocationRepository, SQLRepository 
   @Override
   public void removeLocation(LocationCache cache) throws SQLException {
     final String sql = "DELETE FROM  location_cache WHERE id = ?";
-    final PreparedStatement statement = connection.prepareStatement(sql);
+    final PreparedStatement statement = connection().prepareStatement(sql);
     statement.setString(1, cache.getId());
     statement.execute();
   }
@@ -83,7 +81,7 @@ public class SQLLocationRepository implements LocationRepository, SQLRepository 
   @Override
   public void removeLocations(TeleportLocation teleportLocation) throws SQLException {
     final String sql = "DELETE FROM location_cache WHERE rtp = ?";
-    final PreparedStatement statement = connection.prepareStatement(sql);
+    final PreparedStatement statement = connection().prepareStatement(sql);
     statement.setString(1, teleportLocation.getName());
     statement.execute();
   }
@@ -91,7 +89,7 @@ public class SQLLocationRepository implements LocationRepository, SQLRepository 
   @Override
   public void addLocation(TeleportLocation teleportLocation, LocationCache cache) throws SQLException {
     final String sql = "INSERT INTO location_cache (rtp, id, location) VALUES (?,?,?)";
-    final PreparedStatement statement = connection.prepareStatement(sql);
+    final PreparedStatement statement = connection().prepareStatement(sql);
     statement.setString(1, teleportLocation.getName());
     statement.setString(2, cache.getId());
     statement.setString(3, cache.toString());

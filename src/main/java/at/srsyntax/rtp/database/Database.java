@@ -2,6 +2,7 @@ package at.srsyntax.rtp.database;
 
 import at.srsyntax.rtp.database.repository.location.LocationRepository;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 /*
@@ -32,6 +33,7 @@ public interface Database {
   void connect() throws SQLException;
   void disconnect();
   boolean isConnected() throws SQLException;
+  Connection getConnection();
 
   LocationRepository getLocationRepository();
 

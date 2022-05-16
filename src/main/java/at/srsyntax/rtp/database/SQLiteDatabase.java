@@ -40,18 +40,17 @@ public class SQLiteDatabase implements Database {
 
   @Getter private final LocationRepository locationRepository;
 
-  public SQLiteDatabase(RTPPlugin plugin) throws SQLException {
+  public SQLiteDatabase(RTPPlugin plugin) {
     this.plugin = plugin;
-
-    connect();
-
-    this.locationRepository = new SQLLocationRepository(plugin, connection);
+    this.locationRepository = new SQLLocationRepository(this);
   }
 
   @Override
   public void connect() throws SQLException {
     final File file = new File(this.plugin.getDataFolder(), "database.db");
     this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
+
+    locationRepository.createTable();
   }
 
   @Override
@@ -65,6 +64,17 @@ public class SQLiteDatabase implements Database {
   @Override
   public boolean isConnected() throws SQLException {
     return connection != null && !connection.isClosed();
+  }
+
+  @Override
+  public Connection getConnection() {
+    try {
+      if (connection == null || connection.isClosed())
+        connect();
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+    return connection;
   }
 
 }
