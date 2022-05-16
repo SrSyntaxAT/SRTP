@@ -1,6 +1,4 @@
-package at.srsyntax.rtp.config;
-
-import lombok.Getter;
+package at.srsyntax.rtp.api.countdown;
 
 /*
  * MIT License
@@ -25,17 +23,6 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Getter
-public class MessageConfig {
-
-  private final String prefix;
-
-  private final String countdown, countdownCanceled;
-
-  public MessageConfig() {
-    this.prefix = "&8[&6SyntaxRTP&8]";
-
-    this.countdown = "&cYou will be teleported in &e<time> seconds.";
-    this.countdownCanceled = "&cTeleportation was canceled because you moved.";
-  }
+public interface CountdownCallback {
+  void done();
 }

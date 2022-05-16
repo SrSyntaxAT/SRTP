@@ -1,6 +1,6 @@
-package at.srsyntax.rtp.config;
+package at.srsyntax.rtp.api.countdown;
 
-import lombok.Getter;
+import org.bukkit.entity.Player;
 
 /*
  * MIT License
@@ -25,17 +25,10 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Getter
-public class MessageConfig {
+public interface CountdownHandler {
 
-  private final String prefix;
+  boolean hasCountdown();
+  void start();
+  boolean running();
 
-  private final String countdown, countdownCanceled;
-
-  public MessageConfig() {
-    this.prefix = "&8[&6SyntaxRTP&8]";
-
-    this.countdown = "&cYou will be teleported in &e<time> seconds.";
-    this.countdownCanceled = "&cTeleportation was canceled because you moved.";
-  }
 }

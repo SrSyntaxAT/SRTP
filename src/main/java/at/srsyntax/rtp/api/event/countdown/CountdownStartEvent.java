@@ -1,6 +1,8 @@
-package at.srsyntax.rtp.config;
+package at.srsyntax.rtp.api.event.countdown;
 
-import lombok.Getter;
+import at.srsyntax.rtp.api.countdown.CountdownHandler;
+import org.bukkit.event.HandlerList;
+import org.jetbrains.annotations.NotNull;
 
 /*
  * MIT License
@@ -25,17 +27,25 @@ import lombok.Getter;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@Getter
-public class MessageConfig {
+public class CountdownStartEvent extends CountdownEvent {
 
-  private final String prefix;
+  private static final HandlerList handlers = new HandlerList();
 
-  private final String countdown, countdownCanceled;
+  public CountdownStartEvent(@NotNull CountdownHandler countdown) {
+    super(countdown);
+  }
 
-  public MessageConfig() {
-    this.prefix = "&8[&6SyntaxRTP&8]";
+  public CountdownStartEvent(boolean isAsync, @NotNull CountdownHandler countdown) {
+    super(isAsync, countdown);
+  }
 
-    this.countdown = "&cYou will be teleported in &e<time> seconds.";
-    this.countdownCanceled = "&cTeleportation was canceled because you moved.";
+  @NotNull
+  public HandlerList getHandlers() {
+    return handlers;
+  }
+
+  @NotNull
+  public static HandlerList getHandlerList() {
+    return handlers;
   }
 }

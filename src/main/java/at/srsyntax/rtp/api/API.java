@@ -1,7 +1,10 @@
 package at.srsyntax.rtp.api;
 
+import at.srsyntax.rtp.api.countdown.CountdownCallback;
+import at.srsyntax.rtp.api.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -35,4 +38,6 @@ public interface API {
   TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, @Nullable String[] aliases);
   void deleteLocation(@NotNull String name);
   void deleteLocation(@NotNull TeleportLocation location);
+
+  CountdownHandler newCountdownHandler(TeleportLocation teleportLocation, Player player, CountdownCallback callback);
 }
