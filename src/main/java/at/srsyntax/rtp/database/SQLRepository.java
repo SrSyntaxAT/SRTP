@@ -29,5 +29,6 @@ import java.sql.SQLException;
 public interface SQLRepository {
 
   void createTable() throws SQLException;
+  Connection connection();
 
 }

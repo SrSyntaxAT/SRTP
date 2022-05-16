@@ -1,13 +1,4 @@
-package at.srsyntax.rtp.api;
-
-import at.srsyntax.rtp.api.cooldown.CooldownHandler;
-import at.srsyntax.rtp.api.countdown.CountdownCallback;
-import at.srsyntax.rtp.api.countdown.CountdownHandler;
-import at.srsyntax.rtp.api.location.TeleportLocation;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package at.srsyntax.rtp.api.cooldown;
 
 /*
  * MIT License
@@ -32,14 +23,9 @@ import org.jetbrains.annotations.Nullable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface API {
+public interface CooldownHandler {
 
-  @Nullable TeleportLocation getLocation(@NotNull String name);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, @Nullable String[] aliases);
-  void deleteLocation(@NotNull String name);
-  void deleteLocation(@NotNull TeleportLocation location);
+  boolean hasCooldown();
+  void addCooldown();
 
-  CountdownHandler newCountdownHandler(TeleportLocation teleportLocation, Player player, CountdownCallback callback);
-  CooldownHandler newCooldownHandler(TeleportLocation teleportLocation, Player player);
 }

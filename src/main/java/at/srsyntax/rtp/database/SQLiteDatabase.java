@@ -1,6 +1,8 @@
 package at.srsyntax.rtp.database;
 
 import at.srsyntax.rtp.RTPPlugin;
+import at.srsyntax.rtp.database.repository.cooldown.CooldownRepository;
+import at.srsyntax.rtp.database.repository.cooldown.SQLCooldownRepository;
 import at.srsyntax.rtp.database.repository.location.LocationRepository;
 import at.srsyntax.rtp.database.repository.location.SQLLocationRepository;
 import lombok.Getter;
@@ -39,18 +41,21 @@ public class SQLiteDatabase implements Database {
   private Connection connection;
 
   @Getter private final LocationRepository locationRepository;
+  @Getter private final CooldownRepository cooldownRepository;
 
   public SQLiteDatabase(RTPPlugin plugin) {
     this.plugin = plugin;
     this.locationRepository = new SQLLocationRepository(this);
+    this.cooldownRepository = new SQLCooldownRepository(plugin, this, plugin.getConfig().isOffline());
   }
 
   @Override
   public void connect() throws SQLException {
     final File file = new File(this.plugin.getDataFolder(), "database.db");
-    this.connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
+    connection = DriverManager.getConnection("jdbc:sqlite:" + file.getPath());
 
     locationRepository.createTable();
+    cooldownRepository.createTable();
   }
 
   @Override

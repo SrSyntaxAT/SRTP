@@ -1,5 +1,6 @@
 package at.srsyntax.rtp.database;
 
+import at.srsyntax.rtp.database.repository.cooldown.CooldownRepository;
 import at.srsyntax.rtp.database.repository.location.LocationRepository;
 
 import java.sql.Connection;
@@ -36,5 +37,6 @@ public interface Database {
   Connection getConnection();
 
   LocationRepository getLocationRepository();
+  CooldownRepository getCooldownRepository();
 
 }

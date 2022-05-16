@@ -1,10 +1,12 @@
 package at.srsyntax.rtp;
 
 import at.srsyntax.rtp.api.API;
+import at.srsyntax.rtp.api.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.countdown.CountdownCallback;
 import at.srsyntax.rtp.api.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.location.LocationCache;
 import at.srsyntax.rtp.api.location.TeleportLocation;
+import at.srsyntax.rtp.cooldown.CooldownHandlerImpl;
 import at.srsyntax.rtp.countdown.CountdownHandlerImpl;
 import at.srsyntax.rtp.util.TeleportLocationCache;
 import lombok.AllArgsConstructor;
@@ -81,5 +83,10 @@ public class APIImpl implements API {
   @Override
   public CountdownHandler newCountdownHandler(TeleportLocation teleportLocation, Player player, CountdownCallback callback) {
     return new CountdownHandlerImpl(plugin, teleportLocation, player, callback);
+  }
+
+  @Override
+  public CooldownHandler newCooldownHandler(TeleportLocation teleportLocation, Player player) {
+    return new CooldownHandlerImpl(plugin, teleportLocation, player);
   }
 }

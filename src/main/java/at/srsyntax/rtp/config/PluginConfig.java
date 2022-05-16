@@ -33,13 +33,14 @@ import java.util.List;
 public class PluginConfig extends ConfigLoader {
 
   private final boolean prefix;
-
+  private final boolean offline;
   private final List<TeleportLocationCache> locations;
 
   private final MessageConfig message;
 
   public PluginConfig() {
     this.prefix = true;
+    this.offline = false;
     this.locations = new ArrayList<>();
 
     this.message = new MessageConfig();

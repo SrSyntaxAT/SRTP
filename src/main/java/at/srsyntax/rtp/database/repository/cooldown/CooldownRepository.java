@@ -1,13 +1,10 @@
-package at.srsyntax.rtp.api;
+package at.srsyntax.rtp.database.repository.cooldown;
 
-import at.srsyntax.rtp.api.cooldown.CooldownHandler;
-import at.srsyntax.rtp.api.countdown.CountdownCallback;
-import at.srsyntax.rtp.api.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
-import org.bukkit.Location;
+import at.srsyntax.rtp.database.SQLRepository;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+
+import java.sql.SQLException;
 
 /*
  * MIT License
@@ -32,14 +29,10 @@ import org.jetbrains.annotations.Nullable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface API {
+public interface CooldownRepository extends SQLRepository {
 
-  @Nullable TeleportLocation getLocation(@NotNull String name);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, @Nullable String[] aliases);
-  void deleteLocation(@NotNull String name);
-  void deleteLocation(@NotNull TeleportLocation location);
+  void insertData(Player player) throws SQLException;
+  void delete(Player player, TeleportLocation teleportLocation) throws SQLException;
+  void add(Player player, TeleportLocation teleportLocation, long end) throws SQLException;
 
-  CountdownHandler newCountdownHandler(TeleportLocation teleportLocation, Player player, CountdownCallback callback);
-  CooldownHandler newCooldownHandler(TeleportLocation teleportLocation, Player player);
 }
