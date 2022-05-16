@@ -2,6 +2,8 @@ package at.srsyntax.rtp;
 
 import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.config.PluginConfig;
+import at.srsyntax.rtp.database.Database;
+import at.srsyntax.rtp.database.SQLiteDatabase;
 import at.srsyntax.rtp.util.VersionCheck;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
@@ -36,6 +38,7 @@ public class RTPPlugin extends JavaPlugin {
   private static API api;
 
   @Getter private PluginConfig config;
+  @Getter private Database database;
 
   @Override
   public void onEnable() {
@@ -46,10 +49,16 @@ public class RTPPlugin extends JavaPlugin {
       api = new APIImpl(this);
 
       config = (PluginConfig) PluginConfig.load(this, new PluginConfig());
+      database = new SQLiteDatabase(this);
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
     }
+  }
+
+  @Override
+  public void onDisable() {
+    database.disconnect();
   }
 
   private void checkVersion() {

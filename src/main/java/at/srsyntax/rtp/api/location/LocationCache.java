@@ -1,8 +1,13 @@
 package at.srsyntax.rtp.api.location;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+
+import java.util.UUID;
 
 /*
  * MIT License
@@ -30,12 +35,15 @@ import org.bukkit.Location;
 @AllArgsConstructor
 public class LocationCache {
 
+  @Getter private transient final String id;
+
   private final String world;
   private final double x, y, z;
   private final float yaw, pitch;
 
   public LocationCache(Location location) {
     this(
+        UUID.randomUUID().toString(),
         location.getWorld().getName(),
         location.getX(),
         location.getY(),
@@ -43,6 +51,19 @@ public class LocationCache {
         location.getYaw(),
         location.getPitch()
     );
+  }
+
+  public LocationCache(String id, LocationCache cache) {
+    this(id, cache.world, cache.x, cache.y, cache.z, cache.yaw, cache.pitch);
+  }
+
+  public static LocationCache fromJson(String id, String json) {
+    return new LocationCache(id, new Gson().fromJson(json, LocationCache.class));
+  }
+
+  @Override
+  public String toString() {
+    return new GsonBuilder().disableHtmlEscaping().create().toJson(this);
   }
 
   public Location toBukkit() {
