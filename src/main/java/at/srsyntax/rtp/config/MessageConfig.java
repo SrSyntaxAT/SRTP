@@ -30,10 +30,13 @@ public class MessageConfig {
 
   private final String prefix;
 
+  private final String cooldown;
   private final String countdown, countdownCanceled;
 
   public MessageConfig() {
     this.prefix = "&8[&6SyntaxRTP&8]";
+
+    this.cooldown = "&cYou may not use this command again for &e<remaining>&c.";
 
     this.countdown = "&cYou will be teleported in &e<time> seconds.";
     this.countdownCanceled = "&cTeleportation was canceled because you moved.";
