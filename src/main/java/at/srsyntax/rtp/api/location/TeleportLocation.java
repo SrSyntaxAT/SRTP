@@ -36,6 +36,7 @@ public interface TeleportLocation {
 
   int getCooldown();
   int getCountdown();
+  double getPrice();
 
   @Nullable String[] getAliases();
 

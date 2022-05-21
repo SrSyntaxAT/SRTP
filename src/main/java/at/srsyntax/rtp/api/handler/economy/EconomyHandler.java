@@ -1,13 +1,6 @@
-package at.srsyntax.rtp.util;
+package at.srsyntax.rtp.api.handler.economy;
 
-import at.srsyntax.rtp.api.location.TeleportLocation;
-import at.srsyntax.rtp.api.location.LocationCache;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.bukkit.command.CommandSender;
-
-import java.util.LinkedList;
-import java.util.List;
+import at.srsyntax.rtp.api.handler.Handler;
 
 /*
  * MIT License
@@ -32,25 +25,5 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
-@Getter
-public class TeleportLocationCache implements TeleportLocation {
-
-  private final String name;
-  private final LocationCache location;
-
-  private final String permission;
-  private final int countdown, cooldown;
-  private final double price;
-
-  private final String[] aliases;
-
-  private final List<LocationCache> locationCaches = new LinkedList<>();
-
-  @Override
-  public boolean hasPermission(CommandSender sender) {
-    final String prefix = "syntaxrtp.teleport.";
-    return sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + getName());
-  }
-
+public interface EconomyHandler extends Handler {
 }

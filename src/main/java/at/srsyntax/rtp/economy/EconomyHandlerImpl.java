@@ -1,14 +1,12 @@
-package at.srsyntax.rtp.api;
+package at.srsyntax.rtp.economy;
 
-import at.srsyntax.rtp.api.cooldown.CooldownHandler;
-import at.srsyntax.rtp.api.countdown.CountdownCallback;
-import at.srsyntax.rtp.api.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
+import at.srsyntax.rtp.api.handler.HandlerException;
 import at.srsyntax.rtp.api.location.TeleportLocation;
-import org.bukkit.Location;
+import lombok.AllArgsConstructor;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /*
  * MIT License
@@ -33,17 +31,23 @@ import org.jetbrains.annotations.Nullable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface API {
+@AllArgsConstructor
+public class EconomyHandlerImpl implements EconomyHandler {
 
-  @Nullable TeleportLocation getLocation(@NotNull String name);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price, @Nullable String[] aliases);
-  void deleteLocation(@NotNull String name);
-  void deleteLocation(@NotNull TeleportLocation location);
+  private final Economy economy;
+  private final TeleportLocation teleportLocation;
+  private final Player player;
 
-  CountdownHandler newCountdownHandler(TeleportLocation teleportLocation, Player player, CountdownCallback callback);
-  CooldownHandler newCooldownHandler(TeleportLocation teleportLocation, Player player);
-  EconomyHandler newEconomyHandler(TeleportLocation teleportLocation, Player player);
+  @Override
+  public void handle() throws HandlerException {
+    if (economy == null || teleportLocation.getPrice() <= 0 || canBypass()) return;
+    final EconomyResponse response = economy.withdrawPlayer(player, teleportLocation.getPrice());
+    if (response.type != EconomyResponse.ResponseType.SUCCESS)
+      throw new HandlerException(response.errorMessage);
+  }
 
-  boolean isVaultSupported();
+  @Override
+  public boolean canBypass() {
+    return canBypass(player, "syntaxrtp.buy.bypass", teleportLocation.getName());
+  }
 }
