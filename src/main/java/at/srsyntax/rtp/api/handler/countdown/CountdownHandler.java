@@ -1,4 +1,6 @@
-package at.srsyntax.rtp.api.cooldown;
+package at.srsyntax.rtp.api.handler.countdown;
+
+import at.srsyntax.rtp.api.handler.Handler;
 
 /*
  * MIT License
@@ -23,9 +25,9 @@ package at.srsyntax.rtp.api.cooldown;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface CooldownHandler {
+public interface CountdownHandler extends Handler {
 
-  boolean hasCooldown();
-  void addCooldown();
+  void start();
+  boolean running();
 
 }

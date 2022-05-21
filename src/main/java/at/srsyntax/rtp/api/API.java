@@ -1,8 +1,8 @@
 package at.srsyntax.rtp.api;
 
-import at.srsyntax.rtp.api.cooldown.CooldownHandler;
-import at.srsyntax.rtp.api.countdown.CountdownCallback;
-import at.srsyntax.rtp.api.countdown.CountdownHandler;
+import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
+import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
+import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import org.bukkit.Location;

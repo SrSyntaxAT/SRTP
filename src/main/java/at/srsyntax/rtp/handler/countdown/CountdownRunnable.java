@@ -1,14 +1,11 @@
-package at.srsyntax.rtp.countdown;
+package at.srsyntax.rtp.handler.countdown;
 
 import at.srsyntax.rtp.RTPPlugin;
 import at.srsyntax.rtp.api.Message;
 import at.srsyntax.rtp.config.MessageConfig;
 import at.srsyntax.rtp.config.PluginConfig;
-import lombok.AllArgsConstructor;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 
 /*
  * MIT License

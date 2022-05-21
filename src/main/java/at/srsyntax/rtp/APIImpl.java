@@ -1,15 +1,15 @@
 package at.srsyntax.rtp;
 
 import at.srsyntax.rtp.api.API;
-import at.srsyntax.rtp.api.cooldown.CooldownHandler;
-import at.srsyntax.rtp.api.countdown.CountdownCallback;
-import at.srsyntax.rtp.api.countdown.CountdownHandler;
+import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
+import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
+import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.location.LocationCache;
 import at.srsyntax.rtp.api.location.TeleportLocation;
-import at.srsyntax.rtp.cooldown.CooldownHandlerImpl;
-import at.srsyntax.rtp.countdown.CountdownHandlerImpl;
-import at.srsyntax.rtp.economy.EconomyHandlerImpl;
+import at.srsyntax.rtp.handler.cooldown.CooldownHandlerImpl;
+import at.srsyntax.rtp.handler.countdown.CountdownHandlerImpl;
+import at.srsyntax.rtp.handler.economy.EconomyHandlerImpl;
 import at.srsyntax.rtp.util.TeleportLocationCache;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;

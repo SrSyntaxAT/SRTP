@@ -1,6 +1,6 @@
-package at.srsyntax.rtp.api.countdown;
+package at.srsyntax.rtp.api.handler.cooldown;
 
-import org.bukkit.entity.Player;
+import at.srsyntax.rtp.api.handler.Handler;
 
 /*
  * MIT License
@@ -25,10 +25,10 @@ import org.bukkit.entity.Player;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface CountdownHandler {
+public interface CooldownHandler extends Handler {
 
-  boolean hasCountdown();
-  void start();
-  boolean running();
+  boolean hasCooldown();
+  void addCooldown();
+  void removeCooldown();
 
 }

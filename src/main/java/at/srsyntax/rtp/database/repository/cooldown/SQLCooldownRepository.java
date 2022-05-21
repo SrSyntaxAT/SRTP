@@ -2,7 +2,7 @@ package at.srsyntax.rtp.database.repository.cooldown;
 
 import at.srsyntax.rtp.RTPPlugin;
 import at.srsyntax.rtp.api.location.TeleportLocation;
-import at.srsyntax.rtp.cooldown.CooldownHandlerImpl;
+import at.srsyntax.rtp.handler.cooldown.CooldownHandlerImpl;
 import at.srsyntax.rtp.database.Database;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;

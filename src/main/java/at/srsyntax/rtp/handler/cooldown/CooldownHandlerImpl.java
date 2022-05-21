@@ -1,7 +1,9 @@
-package at.srsyntax.rtp.cooldown;
+package at.srsyntax.rtp.handler.cooldown;
 
 import at.srsyntax.rtp.RTPPlugin;
-import at.srsyntax.rtp.api.cooldown.CooldownHandler;
+import at.srsyntax.rtp.api.handler.HandlerException;
+import at.srsyntax.rtp.api.handler.cooldown.CooldownException;
+import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
@@ -44,16 +46,11 @@ public class CooldownHandlerImpl implements CooldownHandler {
 
   @Override
   public boolean hasCooldown() {
-    if (hasBypassPermission() || player.hasMetadata(getMetadataKey())) return false;
+    if (canBypass() || player.hasMetadata(getMetadataKey())) return false;
     final long end = player.getMetadata(getMetadataKey()).get(0).asLong();
     final boolean activ = System.currentTimeMillis() < end;
     if (!activ) removeCooldown();
     return activ;
-  }
-
-  private boolean hasBypassPermission() {
-    final String prefix = "syntaxrtp.cooldown.bypass.";
-    return player.hasPermission(prefix + "*") || player.hasPermission(prefix + teleportLocation.getName());
   }
 
   @Override
@@ -67,7 +64,8 @@ public class CooldownHandlerImpl implements CooldownHandler {
     }
   }
 
-  private void removeCooldown() {
+  @Override
+  public void removeCooldown() {
     try {
       player.removeMetadata(getMetadataKey(), plugin);
       plugin.getDatabase().getCooldownRepository().delete(player, teleportLocation);
@@ -78,5 +76,17 @@ public class CooldownHandlerImpl implements CooldownHandler {
 
   private String getMetadataKey() {
     return METADATA_KEY + teleportLocation.getName();
+  }
+
+  @Override
+  public void handle() throws HandlerException {
+    if (canBypass()) return;
+    if (hasCooldown()) throw new CooldownException();
+    addCooldown();
+  }
+
+  @Override
+  public boolean canBypass() {
+    return canBypass(player, "syntaxrtp.cooldown.bypass", teleportLocation.getName());
   }
 }

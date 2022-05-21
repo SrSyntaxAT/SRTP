@@ -1,4 +1,4 @@
-package at.srsyntax.rtp.api.countdown;
+package at.srsyntax.rtp.api.handler.countdown;
 
 /*
  * MIT License

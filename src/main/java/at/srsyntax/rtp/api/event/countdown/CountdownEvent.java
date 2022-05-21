@@ -1,6 +1,6 @@
 package at.srsyntax.rtp.api.event.countdown;
 
-import at.srsyntax.rtp.api.countdown.CountdownHandler;
+import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import lombok.Getter;
 import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;

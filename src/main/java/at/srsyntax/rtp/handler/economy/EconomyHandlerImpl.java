@@ -1,4 +1,4 @@
-package at.srsyntax.rtp.economy;
+package at.srsyntax.rtp.handler.economy;
 
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.handler.HandlerException;

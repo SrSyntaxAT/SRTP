@@ -1,11 +1,12 @@
-package at.srsyntax.rtp.countdown;
+package at.srsyntax.rtp.handler.countdown;
 
 import at.srsyntax.rtp.RTPPlugin;
-import at.srsyntax.rtp.api.countdown.CountdownCallback;
-import at.srsyntax.rtp.api.countdown.CountdownHandler;
+import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
+import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.event.countdown.CountdownCanceledEvent;
 import at.srsyntax.rtp.api.event.countdown.CountdownFinishedEvent;
 import at.srsyntax.rtp.api.event.countdown.CountdownStartEvent;
+import at.srsyntax.rtp.api.handler.HandlerException;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -51,13 +52,6 @@ public class CountdownHandlerImpl implements CountdownHandler {
     this.callback = callback;
   }
 
-
-  @Override
-  public boolean hasCountdown() {
-    final String prefix = "syntaxrtp.countdown.bypass.";
-    return player.hasPermission(prefix + "*") || player.hasPermission(prefix + teleportLocation.getName());
-  }
-
   @Override
   public void start() {
     if (task != null) return;
@@ -82,5 +76,15 @@ public class CountdownHandlerImpl implements CountdownHandler {
   @Override
   public boolean running() {
     return task != null && !task.isCancelled();
+  }
+
+  @Override
+  public void handle() throws HandlerException {
+    start();
+  }
+
+  @Override
+  public boolean canBypass() {
+    return canBypass(player, "syntaxrtp.countdown.bypass", teleportLocation.getName());
   }
 }

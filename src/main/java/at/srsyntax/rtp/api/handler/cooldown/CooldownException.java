@@ -1,8 +1,6 @@
-package at.srsyntax.rtp.api.event.countdown;
+package at.srsyntax.rtp.api.handler.cooldown;
 
-import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
-import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
+import at.srsyntax.rtp.api.handler.HandlerException;
 
 /*
  * MIT License
@@ -27,25 +25,7 @@ import org.jetbrains.annotations.NotNull;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public class CountdownFinishedEvent extends CountdownEvent {
-
-  private static final HandlerList handlers = new HandlerList();
-
-  public CountdownFinishedEvent(@NotNull CountdownHandler countdown) {
-    super(countdown);
-  }
-
-  public CountdownFinishedEvent(boolean isAsync, @NotNull CountdownHandler countdown) {
-    super(isAsync, countdown);
-  }
-
-  @NotNull
-  public HandlerList getHandlers() {
-    return handlers;
-  }
-
-  @NotNull
-  public static HandlerList getHandlerList() {
-    return handlers;
+public class CooldownException extends HandlerException {
+  public CooldownException() {
   }
 }
