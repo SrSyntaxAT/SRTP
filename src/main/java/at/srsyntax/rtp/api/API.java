@@ -36,14 +36,14 @@ import org.jetbrains.annotations.Nullable;
 public interface API {
 
   @Nullable TeleportLocation getLocation(@NotNull String name);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price);
-  TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price, @Nullable String[] aliases);
+  @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price);
+  @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price, @Nullable String[] aliases);
   void deleteLocation(@NotNull String name);
   void deleteLocation(@NotNull TeleportLocation location);
 
-  CountdownHandler newCountdownHandler(TeleportLocation teleportLocation, Player player, CountdownCallback callback);
-  CooldownHandler newCooldownHandler(TeleportLocation teleportLocation, Player player);
-  EconomyHandler newEconomyHandler(TeleportLocation teleportLocation, Player player);
+  @NotNull CountdownHandler newCountdownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player, @NotNull CountdownCallback callback);
+  @NotNull CooldownHandler newCooldownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player);
+  @NotNull EconomyHandler newEconomyHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player);
 
   boolean hasActivCountdown(@NotNull Player player);
   @Nullable CountdownHandler getCountdownHandler(@NotNull Player player);

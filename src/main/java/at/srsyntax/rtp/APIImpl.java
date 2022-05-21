@@ -73,12 +73,12 @@ public class APIImpl implements API {
   }
 
   @Override
-  public TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price) {
+  public @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price) {
     return createLocation(name, location, permission, countdown, cooldown, price, null);
   }
 
   @Override
-  public TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price, @Nullable String[] aliases) {
+  public @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price, @Nullable String[] aliases) {
     final TeleportLocationCache teleportLocation = new TeleportLocationCache(
         name, new LocationCache(location),
         permission, countdown, cooldown,
@@ -99,17 +99,17 @@ public class APIImpl implements API {
   }
 
   @Override
-  public CountdownHandler newCountdownHandler(TeleportLocation teleportLocation, Player player, CountdownCallback callback) {
+  public @NotNull CountdownHandler newCountdownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player, @NotNull CountdownCallback callback) {
     return new CountdownHandlerImpl(plugin, teleportLocation, player, callback);
   }
 
   @Override
-  public CooldownHandler newCooldownHandler(TeleportLocation teleportLocation, Player player) {
+  public @NotNull CooldownHandler newCooldownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player) {
     return new CooldownHandlerImpl(plugin, teleportLocation, player);
   }
 
   @Override
-  public EconomyHandler newEconomyHandler(TeleportLocation teleportLocation, Player player) {
+  public @NotNull EconomyHandler newEconomyHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player) {
     return new EconomyHandlerImpl(economy, teleportLocation, player);
   }
 
