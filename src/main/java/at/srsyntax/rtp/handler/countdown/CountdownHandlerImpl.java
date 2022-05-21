@@ -2,6 +2,7 @@ package at.srsyntax.rtp.handler.countdown;
 
 import at.srsyntax.rtp.RTPPlugin;
 import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
+import at.srsyntax.rtp.api.handler.countdown.CountdownException;
 import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.event.countdown.CountdownCanceledEvent;
 import at.srsyntax.rtp.api.event.countdown.CountdownFinishedEvent;
@@ -11,6 +12,7 @@ import at.srsyntax.rtp.api.location.TeleportLocation;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.Nullable;
 
 /*
  * MIT License
@@ -52,14 +54,6 @@ public class CountdownHandlerImpl implements CountdownHandler {
     this.callback = callback;
   }
 
-  @Override
-  public void start() {
-    if (task != null) return;
-    Bukkit.getPluginManager().callEvent(new CountdownStartEvent(this));
-    final Runnable runnable = new CountdownRunnable(plugin, this, player, teleportLocation.getCountdown());
-    task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, 20L);
-  }
-
   public void finish() {
     if (task == null || task.isCancelled()) return;
     cancel(false);
@@ -69,6 +63,7 @@ public class CountdownHandlerImpl implements CountdownHandler {
 
   public void cancel(boolean event) {
     if (task == null || task.isCancelled()) return;
+    plugin.getCountdownHandlerMap().remove(player);
     task.cancel();
     if (event) Bukkit.getPluginManager().callEvent(new CountdownCanceledEvent(this));
   }
@@ -79,12 +74,51 @@ public class CountdownHandlerImpl implements CountdownHandler {
   }
 
   @Override
+  public boolean hasActivCountdown() {
+    return RTPPlugin.getApi().hasActivCountdown(player);
+  }
+
+  @Override
+  public @Nullable CountdownHandler getActivCountdown() {
+    return RTPPlugin.getApi().getCountdownHandler(player);
+  }
+
+  @Override
   public void handle() throws HandlerException {
-    start();
+    if (task != null || hasActivCountdown()) throw new CountdownException();
+    plugin.getCountdownHandlerMap().put(player, this);
+    Bukkit.getPluginManager().callEvent(new CountdownStartEvent(this));
+    final Runnable runnable = new CountdownRunnable(plugin, this, player, teleportLocation.getCountdown());
+    task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, 20L);
   }
 
   @Override
   public boolean canBypass() {
     return canBypass(player, "syntaxrtp.countdown.bypass", teleportLocation.getName());
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    CountdownHandlerImpl that = (CountdownHandlerImpl) o;
+
+    if (plugin != null ? !plugin.equals(that.plugin) : that.plugin != null) return false;
+    if (teleportLocation != null ? !teleportLocation.equals(that.teleportLocation) : that.teleportLocation != null)
+      return false;
+    if (player != null ? !player.equals(that.player) : that.player != null) return false;
+    if (callback != null ? !callback.equals(that.callback) : that.callback != null) return false;
+    return task != null ? task.equals(that.task) : that.task == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = plugin != null ? plugin.hashCode() : 0;
+    result = 31 * result + (teleportLocation != null ? teleportLocation.hashCode() : 0);
+    result = 31 * result + (player != null ? player.hashCode() : 0);
+    result = 31 * result + (callback != null ? callback.hashCode() : 0);
+    result = 31 * result + (task != null ? task.hashCode() : 0);
+    return result;
   }
 }

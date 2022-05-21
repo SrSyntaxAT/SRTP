@@ -1,13 +1,18 @@
 package at.srsyntax.rtp;
 
 import at.srsyntax.rtp.api.API;
+import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.database.Database;
 import at.srsyntax.rtp.database.SQLiteDatabase;
 import at.srsyntax.rtp.util.VersionCheck;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /*
  * MIT License
@@ -41,6 +46,8 @@ public class RTPPlugin extends JavaPlugin {
 
   @Getter private PluginConfig config;
   @Getter private Database database;
+
+  @Getter private final Map<Player, CountdownHandler> countdownHandlerMap = new ConcurrentHashMap<>();
 
   @Override
   public void onEnable() {

@@ -114,6 +114,16 @@ public class APIImpl implements API {
   }
 
   @Override
+  public boolean hasActivCountdown(@NotNull Player player) {
+    return plugin.getCountdownHandlerMap().containsKey(player);
+  }
+
+  @Override
+  public CountdownHandler getCountdownHandler(@NotNull Player player) {
+    return plugin.getCountdownHandlerMap().get(player);
+  }
+
+  @Override
   public boolean isVaultSupported() {
     return economy != null;
   }

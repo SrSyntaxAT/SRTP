@@ -45,5 +45,8 @@ public interface API {
   CooldownHandler newCooldownHandler(TeleportLocation teleportLocation, Player player);
   EconomyHandler newEconomyHandler(TeleportLocation teleportLocation, Player player);
 
+  boolean hasActivCountdown(@NotNull Player player);
+  @Nullable CountdownHandler getCountdownHandler(@NotNull Player player);
+
   boolean isVaultSupported();
 }

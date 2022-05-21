@@ -1,7 +1,6 @@
 package at.srsyntax.rtp.api.handler.countdown;
 
-import at.srsyntax.rtp.api.handler.Handler;
-import org.jetbrains.annotations.Nullable;
+import at.srsyntax.rtp.api.handler.HandlerException;
 
 /*
  * MIT License
@@ -26,10 +25,11 @@ import org.jetbrains.annotations.Nullable;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-public interface CountdownHandler extends Handler {
+public class CountdownException extends HandlerException {
+  public CountdownException(String message) {
+    super(message);
+  }
 
-  boolean running();
-  boolean hasActivCountdown();
-  @Nullable CountdownHandler getActivCountdown();
-
+  public CountdownException() {
+  }
 }
