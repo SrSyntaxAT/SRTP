@@ -1,5 +1,6 @@
 package at.srsyntax.rtp.api.handler;
 
+import at.srsyntax.rtp.RTPPlugin;
 import org.bukkit.command.CommandSender;
 
 /*
@@ -31,7 +32,7 @@ public interface Handler {
   boolean canBypass();
   default boolean canBypass(CommandSender sender, String prefix, String key) {
     prefix = prefix + ".";
-    return sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + key);
+    return sender.hasPermission(RTPPlugin.ADMIN_PERMISSION) || sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + key);
   }
 
 }

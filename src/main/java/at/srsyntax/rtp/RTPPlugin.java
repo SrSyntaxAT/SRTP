@@ -35,6 +35,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class RTPPlugin extends JavaPlugin {
 
   public static final int RESOURCE_ID = 99428, BSTATS_ID = 13408;
+  public static final String ADMIN_PERMISSION = "syntaxrtp.admin";
+
   private static API api;
 
   @Getter private PluginConfig config;

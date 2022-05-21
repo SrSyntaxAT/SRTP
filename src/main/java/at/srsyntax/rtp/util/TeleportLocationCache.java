@@ -1,5 +1,6 @@
 package at.srsyntax.rtp.util;
 
+import at.srsyntax.rtp.RTPPlugin;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import at.srsyntax.rtp.api.location.LocationCache;
 import lombok.AllArgsConstructor;
@@ -50,7 +51,7 @@ public class TeleportLocationCache implements TeleportLocation {
   @Override
   public boolean hasPermission(CommandSender sender) {
     final String prefix = "syntaxrtp.teleport.";
-    return sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + getName());
+    return sender.hasPermission(RTPPlugin.ADMIN_PERMISSION) || sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + getName());
   }
 
 }
