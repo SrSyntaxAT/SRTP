@@ -7,3 +7,10 @@ softdepend:
 
 author: SrSyntaxAT
 website: https://srsyntax.at/
+
+commands:
+  rtp:
+    description: Teleport you randomly to a location
+    aliases:
+      - srtp
+      - syntaxrtp

@@ -1,7 +1,10 @@
 package at.srsyntax.rtp.config;
 
+import at.srsyntax.rtp.RTPPlugin;
+import at.srsyntax.rtp.api.location.TeleportLocation;
 import at.srsyntax.rtp.util.TeleportLocationCache;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,7 @@ public class PluginConfig extends ConfigLoader {
   private final boolean offline;
   private final int cacheSize;
   private final List<TeleportLocationCache> locations;
+  private final String defaultLocation;
 
   private final MessageConfig message;
 
@@ -45,6 +49,12 @@ public class PluginConfig extends ConfigLoader {
 
     this.cacheSize = 3;
     this.locations = new ArrayList<>();
+    final TeleportLocation locationTemplate = RTPPlugin.getApi().createLocation(
+        "Template", Bukkit.getWorld("world").getSpawnLocation(), "syntaxrtp.teleport.Template",
+        10000, 5, 60, 100
+    );
+    locations.add((TeleportLocationCache) locationTemplate);
+    this.defaultLocation = locationTemplate.getName();
 
     this.message = new MessageConfig();
   }

@@ -2,6 +2,7 @@ package at.srsyntax.rtp;
 
 import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
+import at.srsyntax.rtp.command.RTPCommand;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.database.Database;
 import at.srsyntax.rtp.database.SQLiteDatabase;
@@ -63,6 +64,7 @@ public class RTPPlugin extends JavaPlugin {
       database = new SQLiteDatabase(this);
 
       loadCache();
+      registerCommands();
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -72,6 +74,10 @@ public class RTPPlugin extends JavaPlugin {
   @Override
   public void onDisable() {
     database.disconnect();
+  }
+
+  private void registerCommands() {
+    getCommand("rtp").setExecutor(new RTPCommand(api, getConfig()));
   }
 
   public LocationLoader generateLocationLoader(TeleportLocationCache cache) {

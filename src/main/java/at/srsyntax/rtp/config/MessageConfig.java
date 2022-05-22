@@ -31,7 +31,10 @@ public class MessageConfig {
   private final String prefix;
 
   private final String cooldown;
-  private final String countdown, countdownCanceled;
+  private final String countdown, countdownCanceled, countdownAlreadyActive;
+
+  private final String teleported;
+  private final String noPermission, locationNotFound;
 
   public MessageConfig() {
     this.prefix = "&8[&6SyntaxRTP&8]";
@@ -40,5 +43,11 @@ public class MessageConfig {
 
     this.countdown = "&cYou will be teleported in &e<time> seconds.";
     this.countdownCanceled = "&cTeleportation was canceled because you moved.";
+    this.countdownAlreadyActive = "&cThere is already a countdown active.";
+
+    this.teleported = "&aYou were teleported.";
+
+    this.noPermission = "&cYou have no rights to do that!";
+    this.locationNotFound = "&cUnknown rtp location!";
   }
 }
