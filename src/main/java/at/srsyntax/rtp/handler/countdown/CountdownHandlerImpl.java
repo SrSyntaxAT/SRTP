@@ -87,10 +87,15 @@ public class CountdownHandlerImpl implements CountdownHandler {
   public void handle() throws HandlerException {
     if (task != null || hasActivCountdown())
       throw new CountdownException(plugin.getConfig().getMessage().getCountdownAlreadyActive());
-    plugin.getCountdownHandlerMap().put(player, this);
-    Bukkit.getPluginManager().callEvent(new CountdownStartEvent(this));
-    final Runnable runnable = new CountdownRunnable(plugin, this, player, teleportLocation.getCountdown());
-    task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, 20L);
+
+    if (teleportLocation.getCountdown() <= 0 || canBypass()) {
+      callback.done();
+    } else {
+      plugin.getCountdownHandlerMap().put(player, this);
+      Bukkit.getPluginManager().callEvent(new CountdownStartEvent(this));
+      final Runnable runnable = new CountdownRunnable(plugin, this, player, teleportLocation.getCountdown());
+      task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, 20L);
+    }
   }
 
   @Override
