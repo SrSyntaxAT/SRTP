@@ -7,9 +7,12 @@ import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.location.LocationCache;
 import at.srsyntax.rtp.api.location.TeleportLocation;
+import at.srsyntax.rtp.database.repository.location.LocationRepository;
 import at.srsyntax.rtp.handler.cooldown.CooldownHandlerImpl;
 import at.srsyntax.rtp.handler.countdown.CountdownHandlerImpl;
 import at.srsyntax.rtp.handler.economy.EconomyHandlerImpl;
+import at.srsyntax.rtp.util.LocationLoader;
+import at.srsyntax.rtp.util.LocationRandomizer;
 import at.srsyntax.rtp.util.TeleportLocationCache;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -19,6 +22,9 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /*
@@ -73,18 +79,19 @@ public class APIImpl implements API {
   }
 
   @Override
-  public @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price) {
-    return createLocation(name, location, permission, countdown, cooldown, price, null);
+  public @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int size, int countdown, int cooldown, double price) {
+    return createLocation(name, location, permission, size, countdown, cooldown, price, null);
   }
 
   @Override
-  public @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price, @Nullable String[] aliases) {
+  public @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int size, int countdown, int cooldown, double price, @Nullable String[] aliases) {
     final TeleportLocationCache teleportLocation = new TeleportLocationCache(
         name, new LocationCache(location),
-        permission, countdown, cooldown,
+        permission, size, countdown, cooldown,
         price, aliases
     );
     plugin.getConfig().getLocations().add(teleportLocation);
+    plugin.generateLocationLoader(teleportLocation).load();
     return teleportLocation;
   }
 
@@ -95,7 +102,46 @@ public class APIImpl implements API {
 
   @Override
   public void deleteLocation(@NotNull TeleportLocation location) {
-    plugin.getConfig().getLocations().remove(location);
+    try {
+      plugin.getConfig().getLocations().remove(location);
+      plugin.getDatabase().getLocationRepository().removeLocations(location);
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public @NotNull List<TeleportLocation> getLocationsCopy() {
+    return new ArrayList<>(plugin.getConfig().getLocations());
+  }
+
+  @Override
+  public void teleport(@NotNull Player player, @NotNull TeleportLocation location) {
+    final TeleportLocationCache teleportLocationCache = (TeleportLocationCache) location;
+    final LocationCache cache = teleportLocationCache.getLocationCaches().removeFirst();
+    player.teleport(cache.toBukkit());
+    Bukkit.getScheduler().runTaskAsynchronously(plugin, generateLocationRunnable(teleportLocationCache, cache));
+  }
+
+  private Runnable generateLocationRunnable(TeleportLocationCache teleportLocation, LocationCache cache) {
+    return () -> {
+      try {
+        final LocationRepository repository = plugin.getDatabase().getLocationRepository();
+
+        teleportLocation.getLocationCaches().remove(cache);
+        repository.removeLocation(cache);
+
+        final LocationRandomizer randomizer = new LocationRandomizer(cache.toBukkit().getWorld(), teleportLocation.getSize());
+        final LocationCache newLocation = new LocationCache(randomizer.random());
+
+        repository.addLocation(teleportLocation, newLocation);
+        teleportLocation.getLocationCaches().add(newLocation);
+
+        Bukkit.getScheduler().runTask(plugin, newLocation::loadChunk);
+      } catch (SQLException e) {
+        throw new RuntimeException(e);
+      }
+    };
   }
 
   @Override

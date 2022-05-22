@@ -5,6 +5,8 @@ import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.database.Database;
 import at.srsyntax.rtp.database.SQLiteDatabase;
+import at.srsyntax.rtp.util.LocationLoader;
+import at.srsyntax.rtp.util.TeleportLocationCache;
 import at.srsyntax.rtp.util.VersionCheck;
 import lombok.Getter;
 import org.bstats.bukkit.Metrics;
@@ -59,6 +61,8 @@ public class RTPPlugin extends JavaPlugin {
 
       config = (PluginConfig) PluginConfig.load(this, new PluginConfig());
       database = new SQLiteDatabase(this);
+
+      loadCache();
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -68,6 +72,14 @@ public class RTPPlugin extends JavaPlugin {
   @Override
   public void onDisable() {
     database.disconnect();
+  }
+
+  public LocationLoader generateLocationLoader(TeleportLocationCache cache) {
+    return new LocationLoader(getLogger(), database.getLocationRepository(), cache, config.getCacheSize());
+  }
+
+  private void loadCache() {
+    api.getLocationsCopy().forEach(teleportLocation -> generateLocationLoader((TeleportLocationCache) teleportLocation).load());
   }
 
   private void checkVersion() {

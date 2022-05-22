@@ -34,6 +34,7 @@ public class PluginConfig extends ConfigLoader {
 
   private final boolean prefix;
   private final boolean offline;
+  private final int cacheSize;
   private final List<TeleportLocationCache> locations;
 
   private final MessageConfig message;
@@ -41,6 +42,8 @@ public class PluginConfig extends ConfigLoader {
   public PluginConfig() {
     this.prefix = true;
     this.offline = false;
+
+    this.cacheSize = 3;
     this.locations = new ArrayList<>();
 
     this.message = new MessageConfig();

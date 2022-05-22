@@ -61,6 +61,10 @@ public class LocationCache {
     return new LocationCache(id, new Gson().fromJson(json, LocationCache.class));
   }
 
+  public void loadChunk() {
+    toBukkit().getChunk().load(true);
+  }
+
   @Override
   public String toString() {
     return new GsonBuilder().disableHtmlEscaping().create().toJson(this);

@@ -6,9 +6,9 @@ import at.srsyntax.rtp.api.location.LocationCache;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.LinkedList;
-import java.util.List;
 
 /*
  * MIT License
@@ -41,17 +41,22 @@ public class TeleportLocationCache implements TeleportLocation {
   private final LocationCache location;
 
   private final String permission;
-  private final int countdown, cooldown;
+  private final int size, countdown, cooldown;
   private final double price;
 
   private final String[] aliases;
 
-  private final List<LocationCache> locationCaches = new LinkedList<>();
+  private final LinkedList<LocationCache> locationCaches = new LinkedList<>();
 
   @Override
   public boolean hasPermission(CommandSender sender) {
     final String prefix = "syntaxrtp.teleport.";
     return sender.hasPermission(RTPPlugin.ADMIN_PERMISSION) || sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + getName());
+  }
+
+  @Override
+  public void teleport(Player player) {
+    RTPPlugin.getApi().teleport(player, this);
   }
 
 }

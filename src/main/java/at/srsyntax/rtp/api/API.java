@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /*
  * MIT License
  *
@@ -36,10 +38,13 @@ import org.jetbrains.annotations.Nullable;
 public interface API {
 
   @Nullable TeleportLocation getLocation(@NotNull String name);
-  @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price);
-  @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int countdown, int cooldown, double price, @Nullable String[] aliases);
+  @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int size, int countdown, int cooldown, double price);
+  @NotNull TeleportLocation createLocation(@NotNull String name, @NotNull Location location, @Nullable String permission, int size, int countdown, int cooldown, double price, @Nullable String[] aliases);
   void deleteLocation(@NotNull String name);
   void deleteLocation(@NotNull TeleportLocation location);
+  @NotNull List<TeleportLocation> getLocationsCopy();
+
+  void teleport(@NotNull Player player, @NotNull TeleportLocation location);
 
   @NotNull CountdownHandler newCountdownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player, @NotNull CountdownCallback callback);
   @NotNull CooldownHandler newCooldownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player);

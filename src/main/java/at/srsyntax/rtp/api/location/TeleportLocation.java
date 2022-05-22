@@ -1,6 +1,7 @@
 package at.srsyntax.rtp.api.location;
 
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,10 +35,13 @@ public interface TeleportLocation {
   @Nullable String getPermission();
   boolean hasPermission(CommandSender sender);
 
+  int getSize();
   int getCooldown();
   int getCountdown();
   double getPrice();
 
   @Nullable String[] getAliases();
+
+  void teleport(Player player);
 
 }
