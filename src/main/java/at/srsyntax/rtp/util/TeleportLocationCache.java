@@ -50,6 +50,7 @@ public class TeleportLocationCache implements TeleportLocation {
 
   @Override
   public boolean hasPermission(CommandSender sender) {
+    if (permission == null) return true;
     final String prefix = "syntaxrtp.teleport.";
     return sender.hasPermission(RTPPlugin.ADMIN_PERMISSION) || sender.hasPermission(prefix + "*") || sender.hasPermission(prefix + getName());
   }
