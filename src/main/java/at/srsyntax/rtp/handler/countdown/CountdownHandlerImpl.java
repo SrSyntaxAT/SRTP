@@ -85,7 +85,8 @@ public class CountdownHandlerImpl implements CountdownHandler {
 
   @Override
   public void handle() throws HandlerException {
-    if (task != null || hasActivCountdown()) throw new CountdownException();
+    if (task != null || hasActivCountdown())
+      throw new CountdownException(plugin.getConfig().getMessage().getCountdownAlreadyActive());
     plugin.getCountdownHandlerMap().put(player, this);
     Bukkit.getPluginManager().callEvent(new CountdownStartEvent(this));
     final Runnable runnable = new CountdownRunnable(plugin, this, player, teleportLocation.getCountdown());
