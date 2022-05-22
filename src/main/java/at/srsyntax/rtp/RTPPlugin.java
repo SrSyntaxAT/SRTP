@@ -64,7 +64,7 @@ public class RTPPlugin extends JavaPlugin {
       database = new SQLiteDatabase(this);
 
       loadCache();
-      registerCommands();
+      getCommand("rtp").setExecutor(new RTPCommand(api, getConfig()));
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -76,12 +76,8 @@ public class RTPPlugin extends JavaPlugin {
     database.disconnect();
   }
 
-  private void registerCommands() {
-    getCommand("rtp").setExecutor(new RTPCommand(api, getConfig()));
-  }
-
   public LocationLoader generateLocationLoader(TeleportLocationCache cache) {
-    return new LocationLoader(getLogger(), database.getLocationRepository(), cache, config.getCacheSize());
+    return new LocationLoader(getName(), getLogger(), database.getLocationRepository(), cache, config.getCacheSize());
   }
 
   private void loadCache() {

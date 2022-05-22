@@ -1,11 +1,19 @@
 package at.srsyntax.rtp.util;
 
 import at.srsyntax.rtp.api.location.LocationCache;
+import at.srsyntax.rtp.command.AliasCommand;
 import at.srsyntax.rtp.database.repository.location.LocationRepository;
 import lombok.AllArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.SimplePluginManager;
 
+import java.lang.reflect.Field;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.logging.Logger;
 
 /*
@@ -34,6 +42,7 @@ import java.util.logging.Logger;
 @AllArgsConstructor
 public class LocationLoader {
 
+  private final String pluginName;
   private final Logger logger;
   private final LocationRepository repository;
   private final TeleportLocationCache location;
@@ -47,6 +56,7 @@ public class LocationLoader {
       loadLocationCache();
       checkCacheSize();
       loadCache();
+      registerAliasCommand();
       logger.info( name + " was loaded successfully.");
     } catch (Exception exception) {
       logger.severe(name + " could not be loaded successfully.");
@@ -67,6 +77,18 @@ public class LocationLoader {
       location.getLocationCaches().add(cache);
       repository.addLocation(location, cache);
     }
+  }
+
+  private void registerAliasCommand() throws NoSuchFieldException, IllegalAccessException {
+    final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
+    field.setAccessible(true);
+    final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());
+
+    final LinkedList<String> aliases = new LinkedList<>(Arrays.asList(location.getAliases()));
+    final Command command = new AliasCommand(location.getName(), aliases.removeFirst(), aliases);
+    commandMap.register(pluginName.toLowerCase(), command);
+
+    field.setAccessible(false);
   }
 
   private void loadCache() {
