@@ -46,6 +46,7 @@ public class LocationRandomizer {
   private int meanCoordinateX = 0, meanCoordinateZ = 0;
 
   public LocationRandomizer(World world, int size) {
+    if (size < 10) throw new IllegalArgumentException("the size must be greater than 10 blocks");
     this.world = world;
     this.size = size;
   }
