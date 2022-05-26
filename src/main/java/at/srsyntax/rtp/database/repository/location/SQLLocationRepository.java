@@ -60,7 +60,7 @@ public class SQLLocationRepository implements LocationRepository {
   }
 
   private List<LocationCache> readResultSet(ResultSet resultSet) throws SQLException {
-    if (resultSet == null) return null;
+    if (resultSet == null) return new LinkedList<>();
     final List<LocationCache> caches = new LinkedList<>();
 
     while (resultSet.next()) {

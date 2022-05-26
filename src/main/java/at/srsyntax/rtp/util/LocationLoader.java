@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.SimplePluginManager;
 
 import java.lang.reflect.Field;
@@ -65,7 +66,7 @@ public class LocationLoader {
   }
 
   private void loadLocationCache() throws SQLException {
-    location.getLocationCaches().addAll(repository.getLocations(location));
+    location.setLocationCaches((LinkedList<LocationCache>) repository.getLocations(location));
   }
 
   private void checkCacheSize() throws SQLException {
@@ -80,6 +81,8 @@ public class LocationLoader {
   }
 
   private void registerAliasCommand() throws NoSuchFieldException, IllegalAccessException {
+    if (location.getAliases() == null || location.getAliases().length == 0) return;
+
     final Field field = SimplePluginManager.class.getDeclaredField("commandMap");
     field.setAccessible(true);
     final SimpleCommandMap commandMap = (SimpleCommandMap) field.get(Bukkit.getPluginManager());

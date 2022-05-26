@@ -59,7 +59,7 @@ public class CountdownRunnable implements Runnable {
     final MessageConfig messageConfig = config.getMessage();
 
     if (checkLocation()) {
-      new Message(messageConfig.getCountdown(), config).send(player);
+      new Message(messageConfig.getCountdown(), config).add("<time>", String.valueOf(time)).send(player);
       time--;
     } else {
       new Message(messageConfig.getCountdownCanceled(), config).send(player);

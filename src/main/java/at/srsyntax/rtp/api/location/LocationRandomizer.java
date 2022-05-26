@@ -37,6 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class LocationRandomizer {
 
   private static final List<Material> DEFAULT_SPAWN_BLACKLIST = Arrays.asList(Material.AIR, Material.LAVA, Material.WATER);
+  private static final int MAX_TRIES = 100;
 
   private final World world;
   private final int size;
@@ -74,13 +75,15 @@ public class LocationRandomizer {
   public Location random() {
     final List<Material> blacklist = getBlacklist();
     final boolean nether = world.getEnvironment() == World.Environment.NETHER;
-    int x, y, z;
+    int x, y, z, tries = 0;
 
     do {
+      if (tries > MAX_TRIES) throw new TooManyTriesException();
+      tries++;
+
       x = random(meanCoordinateX);
       z = random(meanCoordinateZ);
       y = world.getHighestBlockYAt(x, z);
-
 
       if (nether)
         y = getYInNether(world, x, y, z);
@@ -154,4 +157,6 @@ public class LocationRandomizer {
   public int getMeanCoordinateZ() {
     return meanCoordinateZ;
   }
+
+  public static class TooManyTriesException extends RuntimeException {}
 }

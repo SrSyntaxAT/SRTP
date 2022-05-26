@@ -26,6 +26,7 @@ import at.srsyntax.rtp.api.handler.HandlerException;
  * SOFTWARE.
  */
 public class CooldownException extends HandlerException {
-  public CooldownException() {
+  public CooldownException(String message) {
+    super(message);
   }
 }

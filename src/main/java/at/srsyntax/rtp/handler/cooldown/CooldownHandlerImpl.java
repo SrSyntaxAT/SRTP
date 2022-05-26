@@ -1,15 +1,19 @@
 package at.srsyntax.rtp.handler.cooldown;
 
 import at.srsyntax.rtp.RTPPlugin;
+import at.srsyntax.rtp.api.Message;
 import at.srsyntax.rtp.api.handler.HandlerException;
 import at.srsyntax.rtp.api.handler.cooldown.CooldownException;
 import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
+import at.srsyntax.rtp.config.PluginConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.metadata.MetadataValue;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -47,7 +51,9 @@ public class CooldownHandlerImpl implements CooldownHandler {
   @Override
   public boolean hasCooldown() {
     if (canBypass() || player.hasMetadata(getMetadataKey())) return false;
-    final long end = player.getMetadata(getMetadataKey()).get(0).asLong();
+    final List<MetadataValue> values = player.getMetadata(getMetadataKey());
+    if (values.isEmpty()) return false;
+    final long end = values.get(0).asLong();
     final boolean activ = System.currentTimeMillis() < end;
     if (!activ) removeCooldown();
     return activ;
@@ -80,8 +86,7 @@ public class CooldownHandlerImpl implements CooldownHandler {
 
   @Override
   public void handle() throws HandlerException {
-    if (canBypass()) return;
-    if (hasCooldown()) throw new CooldownException();
+    if (hasCooldown()) throw new CooldownException(plugin.getPluginConfig().getMessage().getCooldown());
     addCooldown();
   }
 

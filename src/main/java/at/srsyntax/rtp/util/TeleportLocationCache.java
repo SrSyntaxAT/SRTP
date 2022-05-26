@@ -3,8 +3,8 @@ package at.srsyntax.rtp.util;
 import at.srsyntax.rtp.RTPPlugin;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import at.srsyntax.rtp.api.location.LocationCache;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -33,7 +33,6 @@ import java.util.LinkedList;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-@AllArgsConstructor
 @Getter
 public class TeleportLocationCache implements TeleportLocation {
 
@@ -46,7 +45,18 @@ public class TeleportLocationCache implements TeleportLocation {
 
   private final String[] aliases;
 
-  private transient final LinkedList<LocationCache> locationCaches = new LinkedList<>();
+  @Setter private transient LinkedList<LocationCache> locationCaches = new LinkedList<>();
+
+  public TeleportLocationCache(String name, LocationCache location, String permission, int size, int countdown, int cooldown, double price, String[] aliases) {
+    this.name = name;
+    this.location = location;
+    this.permission = permission;
+    this.size = size;
+    this.countdown = countdown;
+    this.cooldown = cooldown;
+    this.price = price;
+    this.aliases = aliases;
+  }
 
   @Override
   public boolean hasPermission(CommandSender sender) {

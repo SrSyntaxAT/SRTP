@@ -94,7 +94,7 @@ public class CountdownHandlerImpl implements CountdownHandler {
       plugin.getCountdownHandlerMap().put(player, this);
       Bukkit.getPluginManager().callEvent(new CountdownStartEvent(this));
       final Runnable runnable = new CountdownRunnable(plugin, this, player, teleportLocation.getCountdown());
-      task = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, 20L);
+      task = Bukkit.getScheduler().runTaskTimer(plugin, runnable, 0L, 20L);
     }
   }
 

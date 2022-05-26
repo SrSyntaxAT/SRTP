@@ -68,7 +68,7 @@ public class Message {
 
   private String replace(String message) {
     for (Map.Entry<String, String> entry : replaces.entrySet()) {
-      message.replace(entry.getKey(), entry.getValue());
+      message = message.replace(entry.getKey(), entry.getValue());
     }
     return message;
   }
