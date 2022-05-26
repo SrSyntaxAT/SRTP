@@ -72,7 +72,7 @@ public class APIImpl implements API {
 
   @Override
   public TeleportLocation getLocation(@NotNull String name) {
-    for (TeleportLocation location : plugin.getConfig().getLocations()) {
+    for (TeleportLocation location : plugin.getPluginConfig().getLocations()) {
       if (location.getName().equalsIgnoreCase(name))
         return location;
     }
@@ -91,7 +91,7 @@ public class APIImpl implements API {
         permission, size, countdown, cooldown,
         price, aliases
     );
-    plugin.getConfig().getLocations().add(teleportLocation);
+    plugin.getPluginConfig().getLocations().add(teleportLocation);
     plugin.generateLocationLoader(teleportLocation).load();
     return teleportLocation;
   }
@@ -104,7 +104,7 @@ public class APIImpl implements API {
   @Override
   public void deleteLocation(@NotNull TeleportLocation location) {
     try {
-      plugin.getConfig().getLocations().remove(location);
+      plugin.getPluginConfig().getLocations().remove(location);
       plugin.getDatabase().getLocationRepository().removeLocations(location);
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -113,7 +113,7 @@ public class APIImpl implements API {
 
   @Override
   public @NotNull List<TeleportLocation> getLocationsCopy() {
-    return new ArrayList<>(plugin.getConfig().getLocations());
+    return new ArrayList<>(plugin.getPluginConfig().getLocations());
   }
 
   @Override

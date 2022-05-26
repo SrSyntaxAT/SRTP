@@ -86,7 +86,7 @@ public class CountdownHandlerImpl implements CountdownHandler {
   @Override
   public void handle() throws HandlerException {
     if (task != null || hasActivCountdown())
-      throw new CountdownException(plugin.getConfig().getMessage().getCountdownAlreadyActive());
+      throw new CountdownException(plugin.getPluginConfig().getMessage().getCountdownAlreadyActive());
 
     if (teleportLocation.getCountdown() <= 0 || canBypass()) {
       callback.done();

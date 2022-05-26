@@ -47,7 +47,7 @@ public class RTPPlugin extends JavaPlugin {
 
   private static API api;
 
-  @Getter private PluginConfig config;
+  @Getter private PluginConfig pluginConfig;
   @Getter private Database database;
 
   @Getter private final Map<Player, CountdownHandler> countdownHandlerMap = new ConcurrentHashMap<>();
@@ -60,11 +60,11 @@ public class RTPPlugin extends JavaPlugin {
 
       api = new APIImpl(this);
 
-      config = (PluginConfig) PluginConfig.load(this, new PluginConfig());
+      pluginConfig = (PluginConfig) PluginConfig.load(this, new PluginConfig());
       database = new SQLiteDatabase(this);
 
       loadCache();
-      getCommand("rtp").setExecutor(new RTPCommand(api, getConfig()));
+      getCommand("rtp").setExecutor(new RTPCommand(api, getPluginConfig()));
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
@@ -77,7 +77,7 @@ public class RTPPlugin extends JavaPlugin {
   }
 
   public LocationLoader generateLocationLoader(TeleportLocationCache cache) {
-    return new LocationLoader(getName(), getLogger(), database.getLocationRepository(), cache, config.getCacheSize());
+    return new LocationLoader(getName(), getLogger(), database.getLocationRepository(), cache, pluginConfig.getCacheSize());
   }
 
   private void loadCache() {

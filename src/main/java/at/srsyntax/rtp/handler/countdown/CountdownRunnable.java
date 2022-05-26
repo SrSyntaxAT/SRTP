@@ -55,7 +55,7 @@ public class CountdownRunnable implements Runnable {
       return;
     }
 
-    final PluginConfig config = plugin.getConfig();
+    final PluginConfig config = plugin.getPluginConfig();
     final MessageConfig messageConfig = config.getMessage();
 
     if (checkLocation()) {

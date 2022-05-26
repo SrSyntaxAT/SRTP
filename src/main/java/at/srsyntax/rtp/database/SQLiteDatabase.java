@@ -46,7 +46,7 @@ public class SQLiteDatabase implements Database {
   public SQLiteDatabase(RTPPlugin plugin) {
     this.plugin = plugin;
     this.locationRepository = new SQLLocationRepository(this);
-    this.cooldownRepository = new SQLCooldownRepository(plugin, this, plugin.getConfig().isOffline());
+    this.cooldownRepository = new SQLCooldownRepository(plugin, this, plugin.getPluginConfig().isOffline());
   }
 
   @Override
