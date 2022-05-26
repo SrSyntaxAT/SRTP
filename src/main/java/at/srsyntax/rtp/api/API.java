@@ -6,6 +6,7 @@ import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -45,6 +46,8 @@ public interface API {
   @NotNull List<TeleportLocation> getLocationsCopy();
 
   void teleport(@NotNull Player player, @NotNull TeleportLocation location);
+  void teleport(@NotNull Player player, @NotNull Location center, int size);
+  void teleport(@NotNull Player player, @NotNull World world, int centerX, int centerZ, int size);
 
   @NotNull CountdownHandler newCountdownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player, @NotNull CountdownCallback callback);
   @NotNull CooldownHandler newCooldownHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player);

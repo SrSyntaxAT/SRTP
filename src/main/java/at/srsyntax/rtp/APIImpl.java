@@ -1,6 +1,7 @@
 package at.srsyntax.rtp;
 
 import at.srsyntax.rtp.api.API;
+import at.srsyntax.rtp.api.event.PlayerRandomTeleportEvent;
 import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
 import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
@@ -16,6 +17,7 @@ import at.srsyntax.rtp.util.TeleportLocationCache;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
@@ -119,7 +121,18 @@ public class APIImpl implements API {
     final TeleportLocationCache teleportLocationCache = (TeleportLocationCache) location;
     final LocationCache cache = teleportLocationCache.getLocationCaches().removeFirst();
     player.teleport(cache.toBukkit());
+    Bukkit.getPluginManager().callEvent(new PlayerRandomTeleportEvent(player, teleportLocationCache));
     Bukkit.getScheduler().runTaskAsynchronously(plugin, generateLocationRunnable(teleportLocationCache, cache));
+  }
+
+  @Override
+  public void teleport(@NotNull Player player, @NotNull Location center, int size) {
+    teleport(player, Objects.requireNonNull(center.getWorld()), center.getBlockX(), center.getBlockZ(), size);
+  }
+
+  @Override
+  public void teleport(@NotNull Player player, @NotNull World world, int centerX, int centerZ, int size) {
+    player.teleport(new LocationRandomizer(world, size).meanCoordinate(centerX, centerZ).random());
   }
 
   private Runnable generateLocationRunnable(TeleportLocationCache teleportLocation, LocationCache cache) {
