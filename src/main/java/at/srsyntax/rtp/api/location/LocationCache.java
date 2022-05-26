@@ -57,6 +57,10 @@ public class LocationCache {
     this(id, cache.world, cache.x, cache.y, cache.z, cache.yaw, cache.pitch);
   }
 
+  public LocationCache() {
+    this(UUID.randomUUID().toString(), "world", 0D, 0D, 0D, 0f, 0f);
+  }
+
   public static LocationCache fromJson(String id, String json) {
     return new LocationCache(id, new Gson().fromJson(json, LocationCache.class));
   }
