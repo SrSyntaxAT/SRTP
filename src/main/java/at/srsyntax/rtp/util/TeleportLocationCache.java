@@ -46,7 +46,7 @@ public class TeleportLocationCache implements TeleportLocation {
 
   private final String[] aliases;
 
-  private final LinkedList<LocationCache> locationCaches = new LinkedList<>();
+  private transient final LinkedList<LocationCache> locationCaches = new LinkedList<>();
 
   @Override
   public boolean hasPermission(CommandSender sender) {
