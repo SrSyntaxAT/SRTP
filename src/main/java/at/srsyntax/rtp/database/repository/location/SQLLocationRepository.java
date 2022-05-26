@@ -53,7 +53,7 @@ public class SQLLocationRepository implements LocationRepository {
 
   @Override
   public List<LocationCache> getLocations(TeleportLocation teleportLocation) throws SQLException {
-    final String sql = "SEKECT id, location FROM location_cache WHERE rtp = ?";
+    final String sql = "SELECT id, location FROM location_cache WHERE rtp = ?";
     final PreparedStatement statement = connection().prepareStatement(sql);
     statement.setString(1, teleportLocation.getName());
     return readResultSet(statement.executeQuery());
