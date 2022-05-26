@@ -1,11 +1,11 @@
 package at.srsyntax.rtp.util;
 
 import at.srsyntax.rtp.api.location.LocationCache;
+import at.srsyntax.rtp.api.location.LocationRandomizer;
 import at.srsyntax.rtp.command.AliasCommand;
 import at.srsyntax.rtp.database.repository.location.LocationRepository;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.plugin.SimplePluginManager;

@@ -1,4 +1,4 @@
-package at.srsyntax.rtp.util;
+package at.srsyntax.rtp.api.location;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
