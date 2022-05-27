@@ -34,6 +34,7 @@ import org.bukkit.entity.Player;
 @AllArgsConstructor
 public class EconomyHandlerImpl implements EconomyHandler {
 
+  private final double refundPercent;
   private final Economy economy;
   private final TeleportLocation teleportLocation;
   private final Player player;
@@ -49,5 +50,10 @@ public class EconomyHandlerImpl implements EconomyHandler {
   @Override
   public boolean canBypass() {
     return canBypass(player, "syntaxrtp.buy.bypass", teleportLocation.getName());
+  }
+
+  @Override
+  public void refund() {
+    economy.depositPlayer(player, teleportLocation.getPrice() * refundPercent);
   }
 }

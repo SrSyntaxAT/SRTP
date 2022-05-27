@@ -26,4 +26,5 @@ import at.srsyntax.rtp.api.handler.Handler;
  * SOFTWARE.
  */
 public interface EconomyHandler extends Handler {
+  void refund();
 }

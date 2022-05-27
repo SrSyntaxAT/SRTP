@@ -168,7 +168,7 @@ public class APIImpl implements API {
 
   @Override
   public @NotNull EconomyHandler newEconomyHandler(@NotNull TeleportLocation teleportLocation, @NotNull Player player) {
-    return new EconomyHandlerImpl(economy, teleportLocation, player);
+    return new EconomyHandlerImpl(plugin.getPluginConfig().getRefundPercent(), economy, teleportLocation, player);
   }
 
   @Override

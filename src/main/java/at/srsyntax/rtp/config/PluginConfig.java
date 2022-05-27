@@ -36,6 +36,7 @@ public class PluginConfig extends ConfigLoader {
   private final boolean prefix;
   private final boolean offline;
   private final int cacheSize;
+  private final double refundPercent;
   private final List<TeleportLocationCache> locations;
   private final String defaultLocation;
 
@@ -46,6 +47,7 @@ public class PluginConfig extends ConfigLoader {
     this.offline = false;
 
     this.cacheSize = 3;
+    this.refundPercent = 1D;
     this.locations = new ArrayList<>();
     final TeleportLocationCache locationTemplate = new TeleportLocationCache(
         "Template", new LocationCache(),

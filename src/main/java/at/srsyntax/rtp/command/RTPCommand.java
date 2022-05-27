@@ -3,7 +3,10 @@ package at.srsyntax.rtp.command;
 import at.srsyntax.rtp.RTPPlugin;
 import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.api.Message;
+import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
+import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
+import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import at.srsyntax.rtp.config.MessageConfig;
 import at.srsyntax.rtp.config.PluginConfig;
@@ -64,9 +67,12 @@ public class RTPCommand implements CommandExecutor, TabCompleter {
       final TeleportLocation location = api.getLocation(strings.length > 0 ? strings[0] : defaultLocation);
       if (location == null) throw new Exception(messageConfig.getLocationNotFound());
 
-      api.newCooldownHandler(location, player).handle();
-      api.newEconomyHandler(location, player).handle();
-      api.newCountdownHandler(location, player, newCountdownCallback(location, player)).handle();
+      final CooldownHandler cooldownHandler = api.newCooldownHandler(location, player);
+      final EconomyHandler economyHandler = api.newEconomyHandler(location, player);
+
+      cooldownHandler.handle();
+      economyHandler.handle();
+      api.newCountdownHandler(location, player, newCountdownCallback(location, player, cooldownHandler, economyHandler)).handle();
 
       return true;
     } catch (Exception e) {
@@ -102,13 +108,22 @@ public class RTPCommand implements CommandExecutor, TabCompleter {
     throw new Exception(messageConfig.getNoPermission());
   }
 
-  private CountdownCallback newCountdownCallback(TeleportLocation teleportLocation, Player player) {
-    return () -> {
-      teleportLocation.teleport(player);
-      new Message(messageConfig.getTeleported(), pluginConfig)
-          .add("location", teleportLocation.getName())
-          .add("player", player.getName())
-          .send(player);
+  private CountdownCallback newCountdownCallback(TeleportLocation teleportLocation, Player player, CooldownHandler cooldownHandler, EconomyHandler economyHandler) {
+    return new CountdownCallback() {
+      @Override
+      public void done() {
+        teleportLocation.teleport(player);
+        new Message(messageConfig.getTeleported(), pluginConfig)
+            .add("location", teleportLocation.getName())
+            .add("player", player.getName())
+            .send(player);
+      }
+
+      @Override
+      public void canceled() {
+        cooldownHandler.removeCooldown();
+        economyHandler.refund();
+      }
     };
   }
 }

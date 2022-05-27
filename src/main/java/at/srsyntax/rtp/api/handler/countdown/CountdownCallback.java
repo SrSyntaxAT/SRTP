@@ -25,4 +25,5 @@ package at.srsyntax.rtp.api.handler.countdown;
  */
 public interface CountdownCallback {
   void done();
+  void canceled();
 }

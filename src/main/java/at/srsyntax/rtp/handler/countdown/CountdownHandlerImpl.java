@@ -65,7 +65,10 @@ public class CountdownHandlerImpl implements CountdownHandler {
     if (task == null || task.isCancelled()) return;
     plugin.getCountdownHandlerMap().remove(player);
     task.cancel();
-    if (event) Bukkit.getPluginManager().callEvent(new CountdownCanceledEvent(this));
+    if (event) {
+      callback.canceled();
+      Bukkit.getPluginManager().callEvent(new CountdownCanceledEvent(this));
+    }
   }
 
   @Override
