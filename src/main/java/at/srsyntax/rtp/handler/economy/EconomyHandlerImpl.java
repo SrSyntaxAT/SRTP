@@ -43,7 +43,7 @@ public class EconomyHandlerImpl implements EconomyHandler {
     if (economy == null || teleportLocation.getPrice() <= 0 || canBypass()) return;
     final EconomyResponse response = economy.withdrawPlayer(player, teleportLocation.getPrice());
     if (response.type != EconomyResponse.ResponseType.SUCCESS)
-      throw new HandlerException(response.errorMessage);
+      throw new HandlerException("&c" + response.errorMessage);
   }
 
   @Override
