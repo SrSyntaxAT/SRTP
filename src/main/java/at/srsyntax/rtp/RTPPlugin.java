@@ -6,6 +6,7 @@ import at.srsyntax.rtp.command.RTPCommand;
 import at.srsyntax.rtp.config.PluginConfig;
 import at.srsyntax.rtp.database.Database;
 import at.srsyntax.rtp.database.SQLiteDatabase;
+import at.srsyntax.rtp.listener.JoinListener;
 import at.srsyntax.rtp.util.LocationLoader;
 import at.srsyntax.rtp.util.TeleportLocationCache;
 import at.srsyntax.rtp.util.VersionCheck;
@@ -65,6 +66,8 @@ public class RTPPlugin extends JavaPlugin {
 
       loadCache();
       getCommand("rtp").setExecutor(new RTPCommand(api, getPluginConfig()));
+
+      new JoinListener(this);
     } catch (Exception exception) {
       getLogger().severe("Plugin could not be loaded successfully!");
       exception.printStackTrace();
