@@ -5,6 +5,8 @@ import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.api.Message;
 import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
+import at.srsyntax.rtp.api.handler.countdown.CountdownException;
+import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import at.srsyntax.rtp.config.MessageConfig;
@@ -68,10 +70,17 @@ public class RTPCommand implements CommandExecutor, TabCompleter {
 
       final CooldownHandler cooldownHandler = api.newCooldownHandler(location, player);
       final EconomyHandler economyHandler = api.newEconomyHandler(location, player);
+      final CountdownHandler countdownHandler = api.newCountdownHandler(location, player, newCountdownCallback(location, player, cooldownHandler, economyHandler));
 
+      if (countdownHandler.hasActivCountdown()) throw new CountdownException(messageConfig.getCountdownAlreadyActive());
       cooldownHandler.handle();
-      economyHandler.handle();
-      api.newCountdownHandler(location, player, newCountdownCallback(location, player, cooldownHandler, economyHandler)).handle();
+      try {
+        economyHandler.handle();
+      } catch (Exception exception) {
+        cooldownHandler.removeCooldown();
+        throw exception;
+      }
+      countdownHandler.handle();
 
       return true;
     } catch (Exception e) {
