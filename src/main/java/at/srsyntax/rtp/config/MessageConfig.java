@@ -55,14 +55,15 @@ public class MessageConfig {
     this.noPermission = "&cYou have no rights to do that!";
     this.locationNotFound = "&cUnknown rtp location!";
 
-    this.time = new HashMap<>();
-    time.put("<second>", "second");
-    time.put("<seconds>", "seconds");
-    time.put("<minute>", "minute");
-    time.put("<minutes>", "minutes");
-    time.put("<hour>", "hour");
-    time.put("<hours>", "hours");
-    time.put("<day>", "day");
-    time.put("<days>", "days");
+    this.time = new HashMap<>(){{
+      put("<second>", "second");
+      put("<seconds>", "seconds");
+      put("<minute>", "minute");
+      put("<minutes>", "minutes");
+      put("<hour>", "hour");
+      put("<hours>", "hours");
+      put("<day>", "day");
+      put("<days>", "days");
+    }};
   }
 }

@@ -68,7 +68,7 @@ public class Message {
   }
 
   public String replace() {
-    return replace(prefix == null ? "" : prefix + " " + message);
+    return replace((prefix == null ? "" : prefix + " ") + message);
   }
 
   private String replace(String message) {
