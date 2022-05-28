@@ -5,7 +5,6 @@ import at.srsyntax.rtp.api.API;
 import at.srsyntax.rtp.api.Message;
 import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.handler.countdown.CountdownCallback;
-import at.srsyntax.rtp.api.handler.countdown.CountdownHandler;
 import at.srsyntax.rtp.api.handler.economy.EconomyHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
 import at.srsyntax.rtp.config.MessageConfig;

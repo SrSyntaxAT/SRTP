@@ -6,7 +6,8 @@ import at.srsyntax.rtp.api.handler.HandlerException;
 import at.srsyntax.rtp.api.handler.cooldown.CooldownException;
 import at.srsyntax.rtp.api.handler.cooldown.CooldownHandler;
 import at.srsyntax.rtp.api.location.TeleportLocation;
-import at.srsyntax.rtp.config.PluginConfig;
+import at.srsyntax.rtp.config.MessageConfig;
+import at.srsyntax.rtp.util.RemainingDisplay;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -50,13 +51,16 @@ public class CooldownHandlerImpl implements CooldownHandler {
 
   @Override
   public boolean hasCooldown() {
-    if (canBypass() || player.hasMetadata(getMetadataKey())) return false;
-    final List<MetadataValue> values = player.getMetadata(getMetadataKey());
-    if (values.isEmpty()) return false;
-    final long end = values.get(0).asLong();
-    final boolean activ = System.currentTimeMillis() < end;
+    if (canBypass() || !player.hasMetadata(getMetadataKey())) return false;
+    final boolean activ = System.currentTimeMillis() < getEnd();
     if (!activ) removeCooldown();
     return activ;
+  }
+
+  private long getEnd() {
+    final List<MetadataValue> values = player.getMetadata(getMetadataKey());
+    if (values.isEmpty()) return 0L;
+    return values.get(0).asLong();
   }
 
   @Override
@@ -73,7 +77,8 @@ public class CooldownHandlerImpl implements CooldownHandler {
   @Override
   public void removeCooldown() {
     try {
-      player.removeMetadata(getMetadataKey(), plugin);
+      if (player.hasMetadata(getMetadataKey()))
+        player.removeMetadata(getMetadataKey(), plugin);
       plugin.getDatabase().getCooldownRepository().delete(player, teleportLocation);
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -86,7 +91,14 @@ public class CooldownHandlerImpl implements CooldownHandler {
 
   @Override
   public void handle() throws HandlerException {
-    if (hasCooldown()) throw new CooldownException(plugin.getPluginConfig().getMessage().getCooldown());
+    if (hasCooldown()) {
+      final MessageConfig messageConfig = plugin.getPluginConfig().getMessage();
+      final String message = new Message(messageConfig.getCooldown())
+          .add("<remaining>", RemainingDisplay.getRemainingTime(getEnd()))
+          .add(messageConfig.getTime())
+          .replace();
+      throw new CooldownException(message);
+    }
     addCooldown();
   }
 

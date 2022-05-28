@@ -2,6 +2,9 @@ package at.srsyntax.rtp.config;
 
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /*
  * MIT License
  *
@@ -36,6 +39,8 @@ public class MessageConfig {
   private final String teleported;
   private final String noPermission, locationNotFound;
 
+  private final Map<String, String> time;
+
   public MessageConfig() {
     this.prefix = "&8[&6SyntaxRTP&8]";
 
@@ -49,5 +54,15 @@ public class MessageConfig {
 
     this.noPermission = "&cYou have no rights to do that!";
     this.locationNotFound = "&cUnknown rtp location!";
+
+    this.time = new HashMap<>();
+    time.put("<second>", "second");
+    time.put("<seconds>", "seconds");
+    time.put("<minute>", "minute");
+    time.put("<minutes>", "minutes");
+    time.put("<hour>", "hour");
+    time.put("<hours>", "hours");
+    time.put("<day>", "day");
+    time.put("<days>", "days");
   }
 }

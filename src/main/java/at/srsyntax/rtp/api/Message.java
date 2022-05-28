@@ -4,7 +4,7 @@ import at.srsyntax.rtp.config.PluginConfig;
 import org.bukkit.command.CommandSender;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /*
@@ -35,7 +35,7 @@ public class Message {
   private final String message;
   private String prefix;
 
-  private final Map<String, String> replaces = new HashMap<>(Collections.singletonMap("&", "§"));
+  private final Map<String, String> replaces = new LinkedHashMap<>(Collections.singletonMap("&", "§"));
 
   public Message(String message, PluginConfig config) {
     this.message = message;
@@ -62,6 +62,11 @@ public class Message {
     return this;
   }
 
+  public Message add(Map<String, String> replaces) {
+    this.replaces.putAll(replaces);
+    return this;
+  }
+
   public String replace() {
     return replace(prefix == null ? "" : prefix + " " + message);
   }
@@ -77,5 +82,17 @@ public class Message {
     final String message = replace();
     for (CommandSender sender : senders)
       sender.sendMessage(message);
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public String getPrefix() {
+    return prefix;
+  }
+
+  public Map<String, String> getReplaces() {
+    return replaces;
   }
 }
